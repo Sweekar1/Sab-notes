@@ -1,0 +1,1000 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Sab Notes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0d0c1d;--surf:#161527;--card:#1c1b31;--bdr:#2a2850;
+  --acc:#f4a261;--ach:#e8894a;--grn:#52b788;
+  --txt:#edf2f4;--mut:#8d99ae;--red:#e07a5f;
+}
+html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif;min-height:100vh;font-size:15px}
+h1,h2,h3{font-family:'Crimson Pro',serif;font-weight:700;line-height:1.15}
+a{color:var(--acc);text-decoration:none}
+a:hover{text-decoration:underline}
+p{line-height:1.6}
+
+/* ── buttons ── */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:10px 20px;border-radius:8px;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;transition:all .18s;white-space:nowrap;line-height:1;vertical-align:middle}
+.btn:disabled{opacity:.4;cursor:not-allowed;transform:none!important}
+.btn-acc{background:var(--acc);color:#0d0c1d}
+.btn-acc:hover:not(:disabled){background:var(--ach);transform:translateY(-1px)}
+.btn-ghost{background:transparent;color:var(--mut);border:1px solid var(--bdr)}
+.btn-ghost:hover:not(:disabled){color:var(--txt);border-color:var(--mut)}
+.btn-danger{background:transparent;color:var(--red);border:1px solid rgba(224,122,95,.3)}
+.btn-danger:hover:not(:disabled){background:rgba(224,122,95,.08);border-color:var(--red)}
+.btn-sm{padding:6px 12px;font-size:13px}
+
+/* ── forms ── */
+input,select,textarea{width:100%;padding:10px 14px;background:var(--surf);border:1px solid var(--bdr);border-radius:8px;color:var(--txt);font-family:'DM Sans',sans-serif;font-size:14px;outline:none;transition:border-color .18s}
+input:focus,select:focus,textarea:focus{border-color:var(--acc)}
+select option{background:var(--surf)}
+::placeholder{color:var(--mut)}
+
+/* ── card ── */
+.card{background:var(--card);border:1px solid var(--bdr);border-radius:14px;transition:border-color .18s,transform .18s,box-shadow .18s;padding:20px}
+.card:hover{border-color:rgba(244,162,97,.35);transform:translateY(-2px);box-shadow:0 8px 28px rgba(244,162,97,.08)}
+
+/* ── tags ── */
+.tag{display:inline-flex;align-items:center;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:500;background:var(--surf);border:1px solid var(--bdr);color:var(--mut);white-space:nowrap}
+
+/* ── overlays / modals ── */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.82);display:flex;align-items:center;justify-content:center;z-index:200;padding:16px;backdrop-filter:blur(6px)}
+.modal{background:var(--card);border:1px solid var(--bdr);border-radius:18px;width:100%;position:relative;max-height:92vh;overflow-y:auto}
+
+/* ── drop zone ── */
+.dropzone{border:2px dashed var(--bdr);border-radius:12px;padding:48px 24px;text-align:center;cursor:pointer;transition:all .2s}
+.dropzone:hover,.dropzone.drag{border-color:var(--acc);background:rgba(244,162,97,.04)}
+
+/* ── progress ── */
+.prog-bar{height:4px;background:var(--bdr);border-radius:4px;overflow:hidden;margin-top:10px}
+.prog-fill{height:100%;border-radius:4px;background:var(--acc);transition:width .4s ease,background .3s}
+
+/* ── misc ── */
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.spin{animation:spin .9s linear infinite;display:inline-block}
+.fade-up{animation:fadeUp .28s ease both}
+.pill{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:20px;font-size:12px;font-weight:500;background:rgba(244,162,97,.12);border:1px solid rgba(244,162,97,.25);color:var(--acc)}
+.pill button{background:none;border:none;cursor:pointer;color:var(--acc);padding:0;line-height:1;font-size:13px;display:flex;align-items:center}
+.label{display:block;font-size:11px;font-weight:600;color:var(--mut);margin-bottom:6px;letter-spacing:.06em;text-transform:uppercase}
+.sep{border:none;border-top:1px solid var(--bdr);margin:16px 0}
+.scrolly{overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--bdr) transparent}
+.err-box{padding:14px 16px;background:rgba(224,122,95,.08);border:1px solid rgba(224,122,95,.25);border-radius:10px;color:var(--red);font-size:13px;line-height:1.7;display:flex;gap:10px;align-items:flex-start}
+.info-box{padding:14px 16px;border-radius:10px;font-size:13px;line-height:1.7}
+.info-acc{background:rgba(244,162,97,.07);border:1px solid rgba(244,162,97,.2);color:#b87c4a}
+.info-grn{background:rgba(82,183,136,.07);border:1px solid rgba(82,183,136,.2);color:#3d9068}
+
+/* ── header ── */
+header{position:sticky;top:0;z-index:100;background:rgba(13,12,29,.9);border-bottom:1px solid var(--bdr);backdrop-filter:blur(16px)}
+.hinner{max-width:1200px;margin:0 auto;padding:0 24px;height:62px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.logo{background:none;border:none;cursor:pointer;display:flex;align-items:center;gap:10px}
+.logo-icon{width:34px;height:34px;background:var(--acc);border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.logo-text{font-family:'Crimson Pro',serif;font-size:22px;font-weight:700;color:var(--txt)}
+.nav-actions{display:flex;align-items:center;gap:8px}
+.profile-chip{background:none;border:1px solid var(--bdr);border-radius:8px;padding:6px 14px;color:var(--mut);cursor:pointer;font-size:12px;font-family:'DM Sans',sans-serif;display:flex;align-items:center;gap:6px;transition:all .18s}
+.profile-chip:hover{color:var(--txt);border-color:var(--mut)}
+
+/* ── pages ── */
+#app{display:flex;flex-direction:column;min-height:100vh}
+.page{display:none;flex:1}
+.page.active{display:block}
+.inner{max-width:1200px;margin:0 auto;padding:36px 24px}
+.inner-sm{max-width:700px;margin:0 auto;padding:36px 24px}
+.inner-xs{max-width:520px;margin:0 auto;padding:36px 24px}
+
+/* ── note grid ── */
+.notes-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:18px}
+.note-card-actions{display:flex;gap:6px;align-items:center}
+
+/* ── filter bar ── */
+.filter-bar{background:var(--card);border:1px solid var(--bdr);border-radius:12px;padding:14px 16px;margin-bottom:20px;display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.filter-bar select,.filter-bar input{flex:1 1 auto;min-width:140px;background:var(--surf)}
+.search-wrap{flex:2 1 200px;min-width:160px;position:relative}
+.search-wrap svg-i{position:absolute;left:11px;top:50%;transform:translateY(-50%);pointer-events:none;color:var(--mut)}
+.search-wrap input{padding-left:36px}
+
+/* ── setup steps ── */
+.step-row{display:flex;gap:16px;padding:18px 20px;background:var(--card);border:1px solid var(--bdr);border-radius:12px}
+.step-num{width:30px;height:30px;background:var(--acc);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-weight:700;font-size:14px;color:#0d0c1d;font-family:'DM Sans',sans-serif}
+
+/* ── responsive ── */
+@media(max-width:600px){
+  .hinner{padding:0 14px}
+  .inner,.inner-sm,.inner-xs{padding:24px 14px}
+  .filter-bar{gap:8px}
+  .notes-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- SVG sprite icons -->
+<svg xmlns="http://www.w3.org/2000/svg" style="display:none">
+  <symbol id="ico-book" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+  </symbol>
+  <symbol id="ico-upload" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/>
+  </symbol>
+  <symbol id="ico-search" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+  </symbol>
+  <symbol id="ico-eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+  </symbol>
+  <symbol id="ico-trash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/>
+  </symbol>
+  <symbol id="ico-star" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+  </symbol>
+  <symbol id="ico-x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+  </symbol>
+  <symbol id="ico-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+    <polyline points="20 6 9 17 4 12"/>
+  </symbol>
+  <symbol id="ico-settings" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+  </symbol>
+  <symbol id="ico-alert" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+  </symbol>
+  <symbol id="ico-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+    <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+  </symbol>
+  <symbol id="ico-arrow-left" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/>
+  </symbol>
+  <symbol id="ico-grad" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/>
+  </symbol>
+  <symbol id="ico-file" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><polyline points="13 2 13 9 20 9"/>
+  </symbol>
+  <symbol id="ico-copy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+  </symbol>
+  <symbol id="ico-filter" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>
+  </symbol>
+  <symbol id="ico-discord" viewBox="0 0 24 24" fill="currentColor">
+    <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057.1 18.079.11 18.1.128 18.114a19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/>
+  </symbol>
+</svg>
+
+<div id="app">
+<!-- ════ HEADER ════ -->
+<header>
+  <div class="hinner">
+    <button class="logo" onclick="showPage('browse')">
+      <div class="logo-icon"><svg width="16" height="16" style="color:#0d0c1d"><use href="#ico-book"/></svg></div>
+      <span class="logo-text">Sab Notes</span>
+    </button>
+    <div class="nav-actions">
+      <button class="profile-chip" id="profile-chip" onclick="openProfile()" style="display:none">
+        <svg width="12" height="12"><use href="#ico-grad"/></svg>
+        <span id="chip-label">Profile</span>
+      </button>
+      <button class="btn btn-ghost btn-sm" onclick="showPage('setup')">
+        <svg width="13" height="13"><use href="#ico-settings"/></svg>Setup
+      </button>
+      <button class="btn btn-acc btn-sm" onclick="showPage('upload')">
+        <svg width="14" height="14"><use href="#ico-plus"/></svg>Upload
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- ════ BROWSE PAGE ════ -->
+<div id="page-browse" class="page">
+  <div class="inner">
+    <div style="margin-bottom:28px">
+      <h1 id="browse-title" style="font-size:40px;margin-bottom:6px">All Study Notes</h1>
+      <p id="browse-sub" style="color:var(--mut);font-size:15px">Loading notes…</p>
+    </div>
+
+    <!-- filter bar -->
+    <div class="filter-bar">
+      <div class="search-wrap">
+        <svg width="14" height="14" style="position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--mut);pointer-events:none"><use href="#ico-search"/></svg>
+        <input id="f-search" placeholder="Search notes, subjects…" oninput="applyFilters()" style="padding-left:36px;background:var(--surf)"/>
+      </div>
+      <select id="f-faculty" onchange="applyFilters()" style="flex:0 1 auto;min-width:150px;background:var(--surf)">
+        <option value="">All Faculties</option>
+      </select>
+      <select id="f-year" onchange="applyFilters()" style="flex:0 1 auto;min-width:120px;background:var(--surf)">
+        <option value="">All Years</option>
+        <option>1st Year</option><option>2nd Year</option><option>3rd Year</option>
+        <option>4th Year</option><option>5th Year</option>
+      </select>
+      <select id="f-sem" onchange="applyFilters()" style="flex:0 1 auto;min-width:130px;background:var(--surf)">
+        <option value="">All Semesters</option>
+        <option>1st Part</option><option>2nd Part</option>
+      </select>
+      <button class="btn btn-ghost btn-sm" id="clear-btn" onclick="clearFilters()" style="display:none">
+        <svg width="12" height="12"><use href="#ico-x"/></svg>Clear
+      </button>
+    </div>
+
+    <!-- active pills -->
+    <div id="active-pills" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px"></div>
+
+    <!-- notes grid -->
+    <div id="notes-grid" class="notes-grid"></div>
+  </div>
+</div>
+
+<!-- ════ UPLOAD PAGE ════ -->
+<div id="page-upload" class="page">
+  <div class="inner-sm">
+    <button class="btn btn-ghost btn-sm" onclick="showPage('browse')" style="margin-bottom:28px">
+      <svg width="13" height="13"><use href="#ico-arrow-left"/></svg>Back to Notes
+    </button>
+    <h1 style="font-size:36px;margin-bottom:6px">Upload a Note</h1>
+    <p style="color:var(--mut);margin-bottom:32px;font-size:15px">Share your PDFs with fellow students · Max 25 MB</p>
+
+    <!-- drop zone -->
+    <div class="dropzone" id="dropzone" onclick="document.getElementById('pdf-input').click()"
+      ondragover="event.preventDefault();this.classList.add('drag')"
+      ondragleave="this.classList.remove('drag')"
+      ondrop="handleDrop(event)" style="margin-bottom:28px">
+      <input type="file" id="pdf-input" accept=".pdf,application/pdf" style="display:none" onchange="handleFileSelect(this.files[0])"/>
+      <div id="dz-idle">
+        <div style="width:52px;height:52px;background:rgba(244,162,97,.1);border:1px solid rgba(244,162,97,.2);border-radius:12px;display:flex;align-items:center;justify-content:center;margin:0 auto 14px">
+          <svg width="24" height="24" style="color:var(--acc)"><use href="#ico-upload"/></svg>
+        </div>
+        <p style="color:var(--txt);font-weight:500;margin-bottom:4px;font-size:15px">Drop your PDF here, or click to browse</p>
+        <p style="color:var(--mut);font-size:13px">PDF only · Maximum 25 MB</p>
+      </div>
+      <div id="dz-ready" style="display:none">
+        <div style="width:52px;height:52px;background:rgba(82,183,136,.12);border:1px solid rgba(82,183,136,.25);border-radius:12px;display:flex;align-items:center;justify-content:center;margin:0 auto 14px">
+          <svg width="26" height="26" style="color:var(--grn)"><use href="#ico-check"/></svg>
+        </div>
+        <p id="dz-name" style="color:var(--txt);font-weight:500;margin-bottom:4px;font-size:15px"></p>
+        <p id="dz-size" style="color:var(--mut);font-size:13px"></p>
+      </div>
+    </div>
+
+    <!-- form -->
+    <div style="display:grid;gap:16px">
+      <div>
+        <label class="label">Note Title *</label>
+        <input id="f-title" placeholder="e.g.   Chapter 1"/>
+      </div>
+      <div>
+        <label class="label">Subject / Topic</label>
+        <input id="f-subject" placeholder="e.g.   Mathematics "/>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+        <div>
+          <label class="label">Faculty / Program *</label>
+          <select id="f-fac">
+            <option value="">Select program</option>
+
+
+            <option>Architecture</option>
+            <option>Civil Engineering</option>
+            <option>Computer Engineering</option>
+            <option>Electrical Engineering</option>
+            <option>Mechanical Engineering</option>
+            <option>Electronics Engineering </option>
+            <option>Industrial Engineering</option>
+            <option>Agriculture Engineering</option>
+            <option>Geometics Engineering</option>
+            <option> Automobile Engineering </option>
+            <option> Aerospace Engineering</option>
+             <option> Chemical Engineering</option>
+
+
+            <option>Other</option>
+          </select>
+        </div>
+        <div>
+          <label class="label">College / School</label>
+          <input id="f-college" placeholder="e.g. PUL "/>
+        </div>
+        <div>
+          <label class="label">Year *</label>
+          <select id="f-year-up">
+            <option value="">Select year</option>
+            <option>1st Year</option><option>2nd Year</option><option>3rd Year</option>
+            <option>4th Year</option><option>5th Year</option>
+          </select>
+        </div>
+        <div>
+          <label class="label">Semester / Part *</label>
+          <select id="f-sem-up">
+            <option value="">Select part</option>
+            <option>1st Part</option><option>2nd Part</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- progress -->
+    <div id="up-progress" style="margin-top:24px;display:none">
+      <div style="display:flex;justify-content:space-between;margin-bottom:8px;font-size:13px">
+        <span id="up-label" style="color:var(--mut)"></span>
+        <span id="up-pct" style="color:var(--acc)"></span>
+      </div>
+      <div class="prog-bar"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
+    </div>
+
+    <!-- error -->
+    <div id="up-error" style="display:none;margin-top:18px"></div>
+
+    <!-- actions -->
+    <div style="display:flex;gap:12px;margin-top:28px">
+      <button class="btn btn-ghost" onclick="showPage('browse')" id="cancel-btn">Cancel</button>
+      <button class="btn btn-acc" id="submit-btn" onclick="handleUpload()" style="flex:1">
+        <svg width="14" height="14"><use href="#ico-upload"/></svg>Upload Note
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ════ SETUP PAGE ════ -->
+<div id="page-setup" class="page">
+  <div class="inner-sm">
+    <h1 style="font-size:36px;margin-bottom:6px">Admin Setup</h1>
+    <p style="color:var(--mut);margin-bottom:32px;font-size:15px">Configure Discord as your storage backend</p>
+
+    <!-- webhook config -->
+    <div style="background:var(--card);border:1px solid var(--bdr);border-radius:14px;padding:24px;margin-bottom:32px">
+      <h2 style="font-size:21px;margin-bottom:4px">Discord Webhook URL</h2>
+      <p style="color:var(--mut);font-size:13px;margin-bottom:16px;line-height:1.7">
+        Every uploaded PDF is sent to this webhook. Discord hosts the file and returns a public CDN link that the site uses for previews — no other server needed.
+      </p>
+      <div style="display:flex;gap:10px">
+        <input id="wh-input" type="url" placeholder="https://discord.com/api/webhooks/…"/>
+        <button class="btn btn-acc" onclick="saveWebhook()" id="wh-save-btn" style="flex-shrink:0">Save</button>
+      </div>
+      <div id="wh-saved" style="display:none;margin-top:10px;font-size:13px;color:var(--grn);display:flex;align-items:center;gap:6px">
+        <svg width="13" height="13"><use href="#ico-check"/></svg>Webhook saved
+      </div>
+      <div class="info-acc" style="margin-top:14px;padding:12px 14px;border-radius:8px;font-size:13px;line-height:1.7;border:1px solid rgba(244,162,97,.2)">
+        ⚠️ Discord CDN links contain an expiry token (usually a few days). For permanent access, set up a bot that refreshes attachment URLs. See step 5 below.
+      </div>
+    </div>
+
+    <!-- steps -->
+    <h2 style="font-size:24px;margin-bottom:20px">Step-by-step Discord Setup</h2>
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <div class="step-row">
+        <div class="step-num">1</div>
+        <div>
+          <h4 style="font-size:15px;margin-bottom:5px">Create your Discord server</h4>
+          <p style="font-size:13px;color:var(--mut);line-height:1.7">Open Discord → click <strong style="color:var(--txt)">+</strong> in the left sidebar → <em>Create My Own</em> → <em>For me and my friends</em>. Name it something like <strong style="color:var(--txt)">Sab Notes Admin</strong>.</p>
+        </div>
+      </div>
+      <div class="step-row">
+        <div class="step-num">2</div>
+        <div>
+          <h4 style="font-size:15px;margin-bottom:5px">Create a notes channel</h4>
+          <p style="font-size:13px;color:var(--mut);line-height:1.7">Create a text channel named <strong style="color:var(--txt)">#all-notes</strong>. This is where the webhook will post every upload. You can also make separate channels per faculty: <strong style="color:var(--txt)">#architecture</strong>, <strong style="color:var(--txt)">#civil</strong>, etc.</p>
+        </div>
+      </div>
+      <div class="step-row">
+        <div class="step-num">3</div>
+        <div>
+          <h4 style="font-size:15px;margin-bottom:5px">Create the webhook → paste URL here</h4>
+          <p style="font-size:13px;color:var(--mut);line-height:1.7">Open <strong style="color:var(--txt)">#all-notes</strong> → gear icon (Edit Channel) → <em>Integrations</em> → <em>Webhooks</em> → <em>New Webhook</em>. Name it <strong style="color:var(--txt)">Sab Notes Bot</strong>. Copy the Webhook URL and paste it in the field above, then click Save.</p>
+        </div>
+      </div>
+      <div class="step-row">
+        <div class="step-num">4</div>
+        <div>
+          <h4 style="font-size:15px;margin-bottom:5px">How uploads work</h4>
+          <p style="font-size:13px;color:var(--mut);line-height:1.7">When a student uploads a PDF, the site POSTs it to your webhook with <code style="color:var(--acc);background:rgba(244,162,97,.1);padding:1px 5px;border-radius:4px">?wait=true</code>. Discord replies with a message containing the file's CDN URL. That URL is stored in the browser and used for previewing. You see every upload appear in your Discord channel in real time.</p>
+        </div>
+      </div>
+      <div class="step-row">
+        <div class="step-num">5</div>
+        <div>
+          <h4 style="font-size:15px;margin-bottom:5px">(Recommended) Create a bot to refresh URLs</h4>
+          <p style="font-size:13px;color:var(--mut);line-height:1.7">Go to <a href="https://discord.com/developers" target="_blank">discord.com/developers</a> → New Application → Bot tab → Add Bot. Enable <em>Message Content Intent</em>. Use the OAuth2 URL Generator (scopes: <strong style="color:var(--txt)">bot</strong>, permissions: <strong style="color:var(--txt)">Read Messages, Read Message History</strong>) to invite it to your server. With <strong style="color:var(--txt)">discord.py</strong> or <strong style="color:var(--txt)">discord.js</strong> you can build a command like <code style="color:var(--acc);background:rgba(244,162,97,.1);padding:1px 5px;border-radius:4px">/refresh-urls</code> that reads messages and returns fresh attachment URLs.</p>
+        </div>
+      </div>
+      <div class="step-row">
+        <div class="step-num">6</div>
+        <div>
+          <h4 style="font-size:15px;margin-bottom:5px">Managing notes from Discord</h4>
+          <p style="font-size:13px;color:var(--mut);line-height:1.7">Every Discord message shows the note's title, faculty, year, semester, college, file size, and unique Note ID. To delete a note: delete the Discord message (removes the CDN file) AND remove it from the site using the trash icon on the note card. The Note ID in the embed lets you match them up.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="info-grn" style="margin-top:18px;padding:16px 18px;border-radius:12px">
+      <p style="font-size:13px;line-height:1.7">
+        <strong style="color:var(--grn)">Free hosting tip:</strong> Host your bot on <a href="https://railway.app" target="_blank">Railway</a>, <a href="https://render.com" target="_blank">Render</a>, or <a href="https://replit.com" target="_blank">Replit</a> — all have free tiers sufficient for a notes bot.
+      </p>
+    </div>
+  </div>
+</div>
+</div><!-- end #app -->
+
+
+<!-- ════ PROFILE MODAL ════ -->
+<div class="overlay" id="modal-profile" style="display:none">
+  <div class="modal fade-up" style="max-width:420px;padding:36px 32px">
+    <button onclick="closeProfile()" id="profile-close-btn" style="position:absolute;top:16px;right:16px;background:none;border:none;cursor:pointer;color:var(--mut);display:none">
+      <svg width="18" height="18"><use href="#ico-x"/></svg>
+    </button>
+
+    <!-- progress bar -->
+    <div style="display:flex;gap:5px;margin-bottom:28px" id="prof-steps-bar"></div>
+
+    <span id="prof-step-label" style="font-size:11px;color:var(--acc);font-weight:600;letter-spacing:.1em;text-transform:uppercase"></span>
+    <h2 id="prof-step-title" style="font-size:26px;margin:6px 0 24px;line-height:1.2"></h2>
+
+    <div id="prof-step-body"></div>
+
+    <div style="display:flex;gap:10px;margin-top:24px">
+      <button class="btn btn-ghost" id="prof-back-btn" onclick="profBack()" style="display:none">← Back</button>
+      <button class="btn btn-acc" id="prof-next-btn" onclick="profNext()" style="flex:1">Next →</button>
+    </div>
+    <p style="margin-top:16px;font-size:12px;color:var(--mut);text-align:center;line-height:1.7" id="prof-footer">
+      This filters notes to your faculty &amp; year. Change it anytime from the header.
+    </p>
+  </div>
+</div>
+
+<!-- ════ PREVIEW MODAL ════ -->
+<div class="overlay" id="modal-preview" style="display:none" onclick="if(event.target===this)closePreview()">
+  <div class="modal" style="max-width:980px;height:90vh;display:flex;flex-direction:column;overflow:hidden">
+    <div style="padding:14px 20px;border-bottom:1px solid var(--bdr);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;background:var(--card)">
+      <div style="min-width:0;flex:1">
+        <h3 id="prev-title" style="font-size:18px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-family:'Crimson Pro',serif"></h3>
+        <p id="prev-meta" style="color:var(--mut);font-size:12px;margin-top:2px"></p>
+      </div>
+      <div style="display:flex;gap:8px;margin-left:16px;flex-shrink:0">
+        <button class="btn btn-ghost btn-sm" onclick="openSummarize()">
+          <svg width="12" height="12"><use href="#ico-star"/></svg>AI Summary
+        </button>
+        <button onclick="closePreview()" style="background:none;border:none;cursor:pointer;color:var(--mut);padding:6px;display:flex;align-items:center">
+          <svg width="20" height="20"><use href="#ico-x"/></svg>
+        </button>
+      </div>
+    </div>
+    <div style="flex:1;overflow:hidden;background:#111" id="prev-viewer">
+      <div id="prev-loading" style="display:flex;align-items:center;justify-content:center;height:100%;gap:12px;color:var(--mut);font-size:15px">
+        <span class="spin">⟳</span> Loading PDF…
+      </div>
+      <iframe id="prev-iframe" style="width:100%;height:100%;border:none;display:none" title="PDF Preview"></iframe>
+      <div id="prev-err" style="display:none;text-align:center;padding:60px 24px;color:var(--mut)">
+        <svg width="36" height="36" style="opacity:.4;margin-bottom:12px"><use href="#ico-alert"/></svg>
+        <p id="prev-err-msg" style="font-size:15px"></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════ SUMMARIZE MODAL ════ -->
+<div class="overlay" id="modal-sum" style="display:none" onclick="if(event.target===this)document.getElementById('modal-sum').style.display='none'">
+  <div class="modal fade-up" style="max-width:540px;padding:32px">
+    <button onclick="document.getElementById('modal-sum').style.display='none'" style="position:absolute;top:16px;right:16px;background:none;border:none;cursor:pointer;color:var(--mut)">
+      <svg width="18" height="18"><use href="#ico-x"/></svg>
+    </button>
+    <div id="sum-choose">
+      <div style="display:flex;gap:14px;align-items:flex-start;margin-bottom:24px">
+        <div style="width:42px;height:42px;background:rgba(244,162,97,.14);border:1px solid rgba(244,162,97,.28);border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+          <svg width="18" height="18" style="color:var(--acc)"><use href="#ico-star"/></svg>
+        </div>
+        <div>
+          <h2 style="font-size:22px;margin-bottom:3px">Summarize with AI</h2>
+          <p id="sum-note-name" style="color:var(--mut);font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:320px"></p>
+        </div>
+      </div>
+      <div id="sum-err" style="display:none;margin-bottom:16px"></div>
+      <button class="btn btn-acc" onclick="runClaude()" style="width:100%;padding:14px 20px;font-size:15px;margin-bottom:10px;justify-content:center">
+        <svg width="15" height="15"><use href="#ico-star"/></svg>Summarize with Claude
+      </button>
+     
+        </a>
+      </div>
+    </div>
+    <div id="sum-loading" style="display:none;text-align:center;padding:48px 0">
+      <div style="width:52px;height:52px;background:rgba(244,162,97,.14);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 18px">
+        <span class="spin" style="font-size:24px;color:var(--acc)">⟳</span>
+      </div>
+      <h3 style="margin-bottom:8px;font-size:20px">Generating Summary…</h3>
+      <p style="color:var(--mut);font-size:14px">Claude is reading your PDF</p>
+    </div>
+    <div id="sum-result" style="display:none">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px">
+        <h2 style="font-size:22px">Summary</h2>
+        <button class="btn btn-ghost btn-sm" onclick="showSumChoose()">Try again</button>
+      </div>
+      <div id="sum-text" class="scrolly" style="background:var(--surf);border:1px solid var(--bdr);border-radius:12px;padding:20px;max-height:380px;font-size:14px;line-height:1.8;white-space:pre-wrap;color:var(--txt)"></div>
+      <button class="btn btn-ghost" id="copy-btn" onclick="copySummary()" style="width:100%;margin-top:14px;justify-content:center">
+        <svg width="13" height="13"><use href="#ico-copy"/></svg>Copy Summary
+      </button>
+    </div>
+  </div>
+</div>
+
+
+<script>
+const FACULTIES = ["Architecture","Civil Engineering","Computer Engineering","Electrical Engineering","Mechanical Engineering","Electronics Engineering","Industrial Engineering","Agriculture Engineering","Geometics Engineering","Automobile Engineering","Aerospace Engineering","Chemical Engineering<","Other"];
+const MAX_BYTES = 25 * 1024 * 1024;
+
+/* ── state ── */
+let notes = JSON.parse(localStorage.getItem('sn_notes') || '[]');
+let profile = JSON.parse(localStorage.getItem('sn_profile') || 'null');
+let webhook = localStorage.getItem('sn_webhook') || '';
+let selectedFile = null;
+let activeNote = null;  /* for preview / summarize */
+let profStep = 0;
+let profData = {faculty:'', year:'', semester:'', college:''};
+
+/* ── utils ── */
+const genId = () => Date.now().toString(36) + Math.random().toString(36).slice(2);
+const fmtBytes = b => b < 1048576 ? (b/1024).toFixed(1)+'KB' : (b/1048576).toFixed(2)+'MB';
+const fmtDate = d => new Date(d).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+const $ = id => document.getElementById(id);
+const el = (tag,attrs={},html='') => { const e=document.createElement(tag); Object.assign(e,attrs); if(html) e.innerHTML=html; return e; };
+
+/* ── page routing ── */
+function showPage(name) {
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  $('page-'+name).classList.add('active');
+  if(name==='browse') renderBrowse();
+  if(name==='upload') resetUploadForm();
+  if(name==='setup') { $('wh-input').value=webhook; }
+  window.scrollTo(0,0);
+}
+
+/* ── init ── */
+(function init(){
+  // populate faculty filter
+  const sel=$('f-faculty');
+  FACULTIES.forEach(f=>{ const o=document.createElement('option'); o.value=o.textContent=f; sel.appendChild(o); });
+
+  if(webhook) $('wh-input').value=webhook;
+
+  if(!profile){ openProfile(); }
+  else {
+    updateProfileChip();
+    applyProfileFilters();
+  }
+  showPage('browse');
+})();
+
+function updateProfileChip(){
+  if(!profile) return;
+  $('profile-chip').style.display='flex';
+  $('chip-label').textContent = profile.faculty.split(' ')[0] + ' · ' + profile.year;
+}
+
+function applyProfileFilters(){
+  if(!profile) return;
+  $('f-faculty').value = profile.faculty;
+  $('f-year').value    = profile.year;
+  $('f-sem').value     = profile.semester;
+}
+
+/* ── profile modal ── */
+const PROF_STEPS = [
+  { title:"What's your program?",         field:'faculty',  type:'select', options:FACULTIES, label:'Faculty / Program' },
+  { title:"What year are you in?",        field:'year',     type:'select', options:['1st Year','2nd Year','3rd Year','4th Year','5th Year'], label:'Year' },
+  { title:"Which semester or part?",      field:'semester', type:'select', options:['1st Part','2nd Part'], label:'Semester' },
+  { title:"Your college (optional)",      field:'college',  type:'input',  placeholder:'e.g. IOE Pulchowk, Kathmandu University' },
+];
+
+function openProfile(){
+  profData = profile ? {...profile} : {faculty:'',year:'',semester:'',college:''};
+  profStep = 0;
+  $('profile-close-btn').style.display = profile ? 'block' : 'none';
+  $('prof-footer').style.display = profile ? 'none' : 'block';
+  renderProfStep();
+  $('modal-profile').style.display='flex';
+}
+function closeProfile(){ $('modal-profile').style.display='none'; }
+
+function renderProfStep(){
+  const steps = PROF_STEPS;
+  // bar
+  const bar=$('prof-steps-bar'); bar.innerHTML='';
+  steps.forEach((_,i)=>{
+    const d=document.createElement('div');
+    d.style.cssText=`flex:1;height:3px;border-radius:3px;background:${i<=profStep?'var(--acc)':'var(--bdr)'};transition:background .25s`;
+    bar.appendChild(d);
+  });
+  const s = steps[profStep];
+  $('prof-step-label').textContent = `Step ${profStep+1} of ${steps.length}`;
+  $('prof-step-title').textContent = s.title;
+  $('prof-back-btn').style.display = profStep>0 ? 'inline-flex' : 'none';
+
+  const body=$('prof-step-body'); body.innerHTML='';
+  if(s.type==='select'){
+    const sel=document.createElement('select');
+    sel.id='prof-field';
+    const def=document.createElement('option'); def.value=''; def.textContent='Choose '+s.label+'…'; sel.appendChild(def);
+    s.options.forEach(o=>{ const opt=document.createElement('option'); opt.value=opt.textContent=o; if(profData[s.field]===o) opt.selected=true; sel.appendChild(opt); });
+    body.appendChild(sel);
+  } else {
+    const inp=document.createElement('input');
+    inp.id='prof-field'; inp.placeholder=s.placeholder; inp.value=profData[s.field]||'';
+    inp.addEventListener('keydown',e=>{ if(e.key==='Enter') profNext(); });
+    body.appendChild(inp);
+  }
+  $('prof-next-btn').textContent = profStep===steps.length-1 ? 'Save Profile →' : 'Next →';
+}
+
+function profNext(){
+  const s=PROF_STEPS[profStep];
+  const val=$('prof-field').value.trim();
+  if(s.type==='select' && !val) return;
+  profData[s.field]=val;
+  if(profStep<PROF_STEPS.length-1){ profStep++; renderProfStep(); }
+  else {
+    profile=profData;
+    localStorage.setItem('sn_profile',JSON.stringify(profile));
+    updateProfileChip();
+    applyProfileFilters();
+    closeProfile();
+    renderBrowse();
+  }
+}
+function profBack(){ if(profStep>0){ profStep--; renderProfStep(); } }
+
+/* ── browse & filter ── */
+function applyFilters(){ renderBrowse(); }
+
+function clearFilters(){
+  $('f-search').value=''; $('f-faculty').value='';
+  $('f-year').value=''; $('f-sem').value='';
+  renderBrowse();
+}
+
+function renderBrowse(){
+  const q=$('f-search').value.toLowerCase();
+  const fac=$('f-faculty').value;
+  const yr=$('f-year').value;
+  const sem=$('f-sem').value;
+
+  const filtered = notes.filter(n=>{
+    if(fac && n.faculty!==fac) return false;
+    if(yr  && n.year!==yr)     return false;
+    if(sem && n.semester!==sem) return false;
+    if(q && !n.title.toLowerCase().includes(q) && !(n.subject||'').toLowerCase().includes(q)) return false;
+    return true;
+  });
+
+  // title
+  $('browse-title').textContent = fac || (profile?.faculty) || 'All Study Notes';
+  $('browse-sub').innerHTML = `Showing <strong style="color:var(--acc)">${filtered.length}</strong> of ${notes.length} notes`
+    + (profile ? ` · ${profile.year} · ${profile.semester}` : '');
+
+  // clear btn
+  const hasF = q||fac||yr||sem;
+  $('clear-btn').style.display = hasF ? 'inline-flex' : 'none';
+
+  // pills
+  const pills=$('active-pills'); pills.innerHTML='';
+  const mkPill=(label,clear)=>{
+    const span=document.createElement('span'); span.className='pill';
+    span.innerHTML=`${label}<button onclick="${clear}"><svg width="11" height="11"><use href="#ico-x"/></svg></button>`;
+    pills.appendChild(span);
+  };
+  if(fac) mkPill(fac,`document.getElementById('f-faculty').value='';applyFilters()`);
+  if(yr)  mkPill(yr, `document.getElementById('f-year').value='';applyFilters()`);
+  if(sem) mkPill(sem,`document.getElementById('f-sem').value='';applyFilters()`);
+  if(q)   mkPill(`"${q}"`,`document.getElementById('f-search').value='';applyFilters()`);
+
+  // grid
+  const grid=$('notes-grid'); grid.innerHTML='';
+  if(filtered.length===0){
+    grid.innerHTML=`<div style="grid-column:1/-1;text-align:center;padding:80px 24px">
+      <div style="width:64px;height:64px;background:rgba(244,162,97,.08);border:1px solid rgba(244,162,97,.15);border-radius:16px;display:flex;align-items:center;justify-content:center;margin:0 auto 20px">
+        <svg width="28" height="28" style="color:var(--acc);opacity:.6"><use href="#ico-file"/></svg>
+      </div>
+      <h3 style="font-size:22px;margin-bottom:8px">No notes found</h3>
+      <p style="color:var(--mut);font-size:14px;margin-bottom:28px;max-width:340px;margin-left:auto;margin-right:auto">
+        ${notes.length===0 ? 'Be the first to share study notes!' : 'Try adjusting or clearing your filters.'}
+      </p>
+      <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+        ${hasF?`<button class="btn btn-ghost" onclick="clearFilters()"><svg width="14" height="14"><use href="#ico-x"/></svg>Clear Filters</button>`:''}
+        <button class="btn btn-acc" onclick="showPage('upload')"><svg width="14" height="14"><use href="#ico-plus"/></svg>Upload a Note</button>
+      </div>
+    </div>`;
+    return;
+  }
+  filtered.forEach((n,i)=>{ grid.appendChild(makeCard(n,i)); });
+}
+
+function makeCard(n,i){
+  const div=document.createElement('div');
+  div.className='card fade-up';
+  div.style.animationDelay=`${i*35}ms`;
+  div.innerHTML=`
+    <div style="display:flex;gap:14px;margin-bottom:14px">
+      <div style="width:46px;height:54px;background:rgba(244,162,97,.1);border:1px solid rgba(244,162,97,.18);border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+        <svg width="20" height="20" style="color:var(--acc)"><use href="#ico-file"/></svg>
+      </div>
+      <div style="flex:1;min-width:0">
+        <h3 style="font-size:16px;font-weight:600;color:var(--txt);margin-bottom:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-family:'Crimson Pro',serif">${n.title}</h3>
+        <p style="color:var(--mut);font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${n.subject||'No subject'}</p>
+      </div>
+    </div>
+    <div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:16px">
+      <span class="tag">${n.faculty}</span>
+      <span class="tag">${n.year}</span>
+      <span class="tag">${n.semester}</span>
+      ${n.college?`<span class="tag" style="max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${n.college}</span>`:''}
+    </div>
+    <div style="display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--bdr);padding-top:14px">
+      <span style="color:var(--mut);font-size:11px">${fmtDate(n.uploadedAt)} · ${fmtBytes(n.fileSize)}</span>
+      <div class="note-card-actions" id="actions-${n.id}">
+        <button class="btn btn-ghost btn-sm" onclick="confirmDelete('${n.id}')" title="Delete"><svg width="12" height="12"><use href="#ico-trash"/></svg></button>
+        <button class="btn btn-ghost btn-sm" onclick="openSummarizeFor('${n.id}')"><svg width="12" height="12"><use href="#ico-star"/></svg>AI</button>
+        <button class="btn btn-acc btn-sm" onclick="openPreview('${n.id}')"><svg width="12" height="12"><use href="#ico-eye"/></svg>View</button>
+      </div>
+    </div>
+  `;
+  return div;
+}
+
+function confirmDelete(id){
+  const acts=$('actions-'+id);
+  acts.innerHTML=`
+    <button class="btn btn-danger btn-sm" onclick="deleteNote('${id}')">Confirm</button>
+    <button class="btn btn-ghost btn-sm" onclick="renderBrowse()">Cancel</button>
+  `;
+}
+
+function deleteNote(id){
+  notes = notes.filter(n=>n.id!==id);
+  localStorage.setItem('sn_notes',JSON.stringify(notes));
+  renderBrowse();
+}
+
+/* ── upload ── */
+function resetUploadForm(){
+  selectedFile=null;
+  $('dz-idle').style.display='block'; $('dz-ready').style.display='none';
+  $('pdf-input').value='';
+  ['f-title','f-subject','f-college'].forEach(id=>$(id).value='');
+  $('f-fac').value=profile?.faculty||'';
+  $('f-year-up').value=profile?.year||'';
+  $('f-sem-up').value=profile?.semester||'';
+  $('up-progress').style.display='none';
+  $('up-error').style.display='none';
+  $('submit-btn').disabled=false;
+  $('cancel-btn').disabled=false;
+  $('submit-btn').innerHTML='<svg width="14" height="14"><use href="#ico-upload"/></svg>Upload Note';
+}
+
+function handleDrop(e){
+  e.preventDefault(); $('dropzone').classList.remove('drag');
+  handleFileSelect(e.dataTransfer.files[0]);
+}
+
+function handleFileSelect(file){
+  if(!file) return;
+  if(file.type!=='application/pdf' && !file.name.endsWith('.pdf')){
+    showUpErr('Only PDF files are accepted.'); return;
+  }
+  selectedFile=file;
+  $('dz-idle').style.display='none';
+  $('dz-ready').style.display='block';
+  $('dz-name').textContent=file.name;
+  $('dz-size').textContent=`${fmtBytes(file.size)} · Click or drag to change`;
+  $('up-error').style.display='none';
+}
+
+function setProgress(pct,label,color='var(--acc)'){
+  $('up-progress').style.display='block';
+  $('up-label').textContent=label;
+  $('up-pct').textContent=pct+'%';
+  $('prog-fill').style.width=pct+'%';
+  $('prog-fill').style.background=color;
+}
+
+function showUpErr(msg){
+  const d=$('up-error');
+  d.style.display='block';
+  d.innerHTML=`<div class="err-box"><svg width="15" height="15" style="flex-shrink:0;margin-top:2px"><use href="#ico-alert"/></svg><span>${msg}</span></div>`;
+}
+
+async function handleUpload(){
+  if(!selectedFile){ showUpErr('Please select a PDF file.'); return; }
+  if(!$('f-title').value.trim()){ showUpErr('Please enter a note title.'); return; }
+  if(!$('f-fac').value){ showUpErr('Please select a faculty / program.'); return; }
+  if(!$('f-year-up').value){ showUpErr('Please select a year.'); return; }
+  if(!$('f-sem-up').value){ showUpErr('Please select a semester / part.'); return; }
+  if(!webhook){ showUpErr('No Discord webhook configured. Go to <strong>Setup</strong> and add your webhook URL first.'); return; }
+
+  $('up-error').style.display='none';
+  $('submit-btn').disabled=true; $('cancel-btn').disabled=true;
+
+  // Check size before sending
+  if(selectedFile.size > MAX_BYTES){
+    $('submit-btn').disabled=false; $('cancel-btn').disabled=false;
+    showUpErr(`This PDF is ${fmtBytes(selectedFile.size)} — exceeding the 25 MB limit. Please compress it first using <a href="https://smallpdf.com/compress-pdf" target="_blank">Smallpdf</a> or <a href="https://www.ilovepdf.com/compress_pdf" target="_blank">ilovepdf</a>, then re-upload.`);
+    return;
+  }
+
+  setProgress(20,'Sending to Discord…');
+  $('submit-btn').innerHTML='<span class="spin">⟳</span> Uploading…';
+
+  try {
+    const note = {
+      id: genId(),
+      title:    $('f-title').value.trim(),
+      subject:  $('f-subject').value.trim(),
+      faculty:  $('f-fac').value,
+      year:     $('f-year-up').value,
+      semester: $('f-sem-up').value,
+      college:  $('f-college').value.trim(),
+      fileName: selectedFile.name,
+      fileSize: selectedFile.size,
+      uploadedAt: new Date().toISOString(),
+      cdnUrl: null
+    };
+
+    // Build embed
+    const embed = {
+      title: `📄 ${note.title}`,
+      color: 0xf4a261,
+      fields:[
+        {name:'📚 Subject',  value:note.subject||'—', inline:true},
+        {name:'🏛️ Faculty', value:note.faculty,       inline:true},
+        {name:'📅 Year',     value:note.year,          inline:true},
+        {name:'🗓️ Semester',value:note.semester,       inline:true},
+        {name:'🏫 College',  value:note.college||'—',  inline:true},
+        {name:'📦 Size',     value:fmtBytes(note.fileSize), inline:true},
+        {name:'🆔 Note ID',  value:'`'+note.id+'`',   inline:false},
+      ],
+      timestamp: note.uploadedAt,
+      footer: {text:'Sab Notes · Upload'}
+    };
+
+    const fd = new FormData();
+    fd.append('payload_json', JSON.stringify({embeds:[embed]}));
+    fd.append('file', selectedFile, note.fileName);
+
+    setProgress(50,'Uploading to Discord…');
+
+    // ?wait=true makes Discord return the message (including CDN attachment URL)
+    const res = await fetch(webhook + '?wait=true', {method:'POST', body:fd});
+    if(!res.ok){
+      const err = await res.text();
+      throw new Error(`Discord error ${res.status}: ${err}`);
+    }
+
+    const msg = await res.json();
+    const cdnUrl = msg?.attachments?.[0]?.url || null;
+    if(!cdnUrl) throw new Error('Discord did not return a file URL. Check that your webhook is correct.');
+
+    note.cdnUrl = cdnUrl;
+    setProgress(90,'Saving…');
+
+    notes.unshift(note);
+    localStorage.setItem('sn_notes', JSON.stringify(notes));
+
+    setProgress(100,'Done!','var(--grn)');
+    $('submit-btn').innerHTML='<svg width="14" height="14"><use href="#ico-check"/></svg> Uploaded!';
+
+    setTimeout(()=>showPage('browse'), 1300);
+
+  } catch(e) {
+    $('submit-btn').disabled=false; $('cancel-btn').disabled=false;
+    $('submit-btn').innerHTML='<svg width="14" height="14"><use href="#ico-upload"/></svg>Retry';
+    $('up-progress').style.display='none';
+    showUpErr(e.message || 'Upload failed. Please check your webhook URL and try again.');
+  }
+}
+
+/* ── preview ── */
+function openPreview(id){
+  activeNote = notes.find(n=>n.id===id);
+  if(!activeNote) return;
+  $('prev-title').textContent = activeNote.title;
+  $('prev-meta').textContent  = `${activeNote.faculty} · ${activeNote.year} · ${activeNote.semester}${activeNote.college?' · '+activeNote.college:''}`;
+  $('prev-loading').style.display='flex';
+  $('prev-iframe').style.display='none';
+  $('prev-err').style.display='none';
+  $('modal-preview').style.display='flex';
+
+  if(activeNote.cdnUrl){
+    const iframe=$('prev-iframe');
+    iframe.onload=()=>{ $('prev-loading').style.display='none'; iframe.style.display='block'; };
+    iframe.onerror=()=>showPrevErr('Could not load the PDF. The Discord CDN link may have expired. Re-upload the note to refresh it.');
+    iframe.src = activeNote.cdnUrl;
+  } else {
+    showPrevErr('This note has no CDN URL. It may have been uploaded before Discord storage was configured. Delete and re-upload it.');
+  }
+}
+
+function showPrevErr(msg){
+  $('prev-loading').style.display='none';
+  $('prev-err-msg').textContent=msg;
+  $('prev-err').style.display='block';
+}
+
+function closePreview(){
+  $('modal-preview').style.display='none';
+  $('prev-iframe').src='about:blank';
+}
+
+/* ── summarize ── */
+function openSummarize(){
+  closePreview();
+  if(activeNote) openSummarizeFor(activeNote.id);
+}
+function openSummarizeFor(id){
+  activeNote = notes.find(n=>n.id===id);
+  if(!activeNote) return;
+  $('sum-note-name').textContent = activeNote.title;
+  showSumChoose();
+  $('sum-err').style.display='none';
+  $('modal-sum').style.display='flex';
+}
+function showSumChoose(){ $('sum-choose').style.display='block'; $('sum-loading').style.display='none'; $('sum-result').style.display='none'; }
+
+async function toBase64FromUrl(url){
+  const res = await fetch(url);
+  const buf = await res.arrayBuffer();
+  const bytes = new Uint8Array(buf);
+  let bin=''; for(let i=0;i<bytes.length;i++) bin+=String.fromCharCode(bytes[i]);
+  return btoa(bin);
+}
+
+async function runClaude(){
+  if(!activeNote?.cdnUrl){
+    $('sum-err').style.display='block';
+    $('sum-err').innerHTML=`<div class="err-box"><svg width="14" height="14"><use href="#ico-alert"/></svg>No file URL found. Re-upload the note first.</div>`;
+    return;
+  }
+  $('sum-choose').style.display='none'; $('sum-loading').style.display='block';
+  try {
+    const b64 = await toBase64FromUrl(activeNote.cdnUrl);
+    const res = await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        model:'claude-sonnet-4-20250514',
+        max_tokens:1000,
+        messages:[{role:'user',content:[
+          {type:'document',source:{type:'base64',media_type:'application/pdf',data:b64}},
+          {type:'text',text:'Give a clear, well-structured summary of this study note. Include key topics, main concepts, important definitions, formulas, and key points to remember. Write it as a helpful review for a student. Use sections where appropriate.'}
+        ]}]
+      })
+    });
+    const data = await res.json();
+    if(data.error) throw new Error(data.error.message);
+    const txt = data.content.map(c=>c.text||'').join('\n').trim();
+    $('sum-text').textContent=txt;
+    $('sum-loading').style.display='none'; $('sum-result').style.display='block';
+  } catch(e){
+    $('sum-loading').style.display='none'; $('sum-choose').style.display='block';
+    $('sum-err').style.display='block';
+    $('sum-err').innerHTML=`<div class="err-box"><svg width="14" height="14"><use href="#ico-alert"/></svg>${e.message||'Failed to generate summary.'}</div>`;
+  }
+}
+
+function copySummary(){
+  navigator.clipboard.writeText($('sum-text').textContent).catch(()=>{});
+  $('copy-btn').innerHTML='<svg width="13" height="13"><use href="#ico-check"/></svg>Copied!';
+  setTimeout(()=>{ $('copy-btn').innerHTML='<svg width="13" height="13"><use href="#ico-copy"/></svg>Copy Summary'; },2200);
+}
+
+/* ── setup ── */
+function saveWebhook(){
+  webhook = $('wh-input').value.trim();
+  localStorage.setItem('sn_webhook',webhook);
+  const saved=$('wh-saved');
+  saved.style.display='flex';
+  setTimeout(()=>saved.style.display='none',2500);
+}
+</script>
+</body>
+</html>
