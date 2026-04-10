@@ -68,9 +68,6 @@ header{position:sticky;top:0;z-index:100;background:rgba(13,12,29,.92);border-bo
 .skel{background:var(--card);border:1px solid var(--bdr);border-radius:14px;padding:20px;overflow:hidden;position:relative}
 .skel::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.04),transparent);animation:shimmer 1.5s infinite}
 .sl{height:12px;background:var(--bdr);border-radius:6px;margin-bottom:10px}
-/* owner setup banner — only shows on very first load */
-#ob{display:none;background:rgba(244,162,97,.1);border-bottom:1px solid rgba(244,162,97,.25);padding:11px 20px;font-size:13px;color:#c8874e;text-align:center;line-height:1.8}
-#ob code{background:rgba(0,0,0,.3);padding:2px 7px;border-radius:4px;font-family:monospace;font-size:12px;color:var(--acc);cursor:pointer;user-select:all}
 .nav-r{display:flex;align-items:center;gap:8px}
 .pchip{background:none;border:1px solid var(--bdr);border-radius:8px;padding:6px 14px;color:var(--mut);cursor:pointer;font-size:12px;font-family:'DM Sans',sans-serif;display:flex;align-items:center;gap:6px;transition:all .18s}
 .pchip:hover{color:var(--txt);border-color:var(--mut)}
@@ -100,14 +97,7 @@ header{position:sticky;top:0;z-index:100;background:rgba(13,12,29,.92);border-bo
   <symbol id="I-copy"   viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></symbol>
   <symbol id="I-warn"   viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></symbol>
   <symbol id="I-ref"    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></symbol>
-  <symbol id="I-zip"    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></symbol>
 </svg>
-
-<!-- owner first-run banner -->
-<div id="ob">
-  ⚡ <strong>Owner one-time step:</strong> Open this HTML file, find <code>BLOB_ID = null</code> and change it to <code>BLOB_ID = '<span id="ob-id">…</span>'</code> — then save &amp; re-upload. Regular users never see this message.
-  <button onclick="navigator.clipboard.writeText(document.getElementById('ob-id').textContent)" style="margin-left:8px;background:rgba(244,162,97,.2);border:1px solid rgba(244,162,97,.4);color:var(--acc);border-radius:5px;padding:2px 8px;cursor:pointer;font-size:12px">Copy ID</button>
-</div>
 
 <div id="app">
 <header>
@@ -121,8 +111,8 @@ header{position:sticky;top:0;z-index:100;background:rgba(13,12,29,.92);border-bo
         <svg width="12" height="12"><use href="#I-grad"/></svg>
         <span id="pchip-lbl">Profile</span>
       </button>
-      <button class="btn btn-ghost btn-sm" id="ref-btn" onclick="loadNotes(true)" title="Refresh">
-        <svg width="13" height="13" id="ref-ico"><use href="#I-ref"/></svg>
+      <button class="btn btn-ghost btn-sm" id="ref-btn" onclick="loadNotes(true)" title="Refresh notes">
+        <svg width="13" height="13"><use href="#I-ref"/></svg>
       </button>
       <button class="btn btn-acc btn-sm" onclick="goPage('upload')">
         <svg width="14" height="14"><use href="#I-plus"/></svg>Upload
@@ -131,14 +121,13 @@ header{position:sticky;top:0;z-index:100;background:rgba(13,12,29,.92);border-bo
   </div>
 </header>
 
-<!-- ══════════ BROWSE ══════════ -->
+<!-- BROWSE -->
 <div id="page-browse" class="page">
   <div class="inner">
     <div style="margin-bottom:28px">
       <h1 id="br-title" style="font-size:38px;margin-bottom:6px">All Study Notes</h1>
       <p id="br-sub" style="color:var(--mut);font-size:15px">Loading notes…</p>
     </div>
-
     <div class="filter-bar">
       <div class="sw">
         <svg width="14" height="14" style="position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--mut);pointer-events:none"><use href="#I-search"/></svg>
@@ -164,7 +153,7 @@ header{position:sticky;top:0;z-index:100;background:rgba(13,12,29,.92);border-bo
   </div>
 </div>
 
-<!-- ══════════ UPLOAD ══════════ -->
+<!-- UPLOAD -->
 <div id="page-upload" class="page">
   <div class="inner-sm">
     <button class="btn btn-ghost btn-sm" onclick="goPage('browse')" style="margin-bottom:28px">
@@ -196,14 +185,8 @@ header{position:sticky;top:0;z-index:100;background:rgba(13,12,29,.92);border-bo
     </div>
 
     <div style="display:grid;gap:16px">
-      <div>
-        <label class="label">Note Title *</label>
-        <input id="u-title" placeholder="e.g. Structural Analysis Chapter 1-4"/>
-      </div>
-      <div>
-        <label class="label">Subject / Topic *</label>
-        <input id="u-sub" placeholder="e.g. Structural Analysis"/>
-      </div>
+      <div><label class="label">Note Title *</label><input id="u-title" placeholder="e.g. Structural Analysis Chapter 1–4"/></div>
+      <div><label class="label">Subject / Topic *</label><input id="u-sub" placeholder="e.g. Structural Analysis"/></div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
         <div>
           <label class="label">Faculty / Program *</label>
@@ -217,10 +200,7 @@ header{position:sticky;top:0;z-index:100;background:rgba(13,12,29,.92);border-bo
             <option>Pharmacy</option><option>IT / Computing</option><option>Other</option>
           </select>
         </div>
-        <div>
-          <label class="label">College / School</label>
-          <input id="u-col" placeholder="e.g. IOE Pulchowk, KU"/>
-        </div>
+        <div><label class="label">College / School</label><input id="u-col" placeholder="e.g. IOE Pulchowk, KU"/></div>
         <div>
           <label class="label">Year *</label>
           <select id="u-yr">
@@ -238,7 +218,6 @@ header{position:sticky;top:0;z-index:100;background:rgba(13,12,29,.92);border-bo
       </div>
     </div>
 
-    <!-- progress -->
     <div id="up-prog" style="display:none;margin-top:24px">
       <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px">
         <span id="up-lbl" style="color:var(--mut)"></span>
@@ -256,10 +235,9 @@ header{position:sticky;top:0;z-index:100;background:rgba(13,12,29,.92);border-bo
     </div>
   </div>
 </div>
-</div><!-- #app -->
+</div>
 
-
-<!-- ══════════ PROFILE MODAL ══════════ -->
+<!-- PROFILE MODAL -->
 <div class="overlay" id="m-profile" style="display:none">
   <div class="modal fade-up" style="max-width:420px;padding:36px 32px">
     <button id="m-pclose" onclick="closeProfile()" style="position:absolute;top:16px;right:16px;background:none;border:none;cursor:pointer;color:var(--mut);display:none">
@@ -273,11 +251,11 @@ header{position:sticky;top:0;z-index:100;background:rgba(13,12,29,.92);border-bo
       <button class="btn btn-ghost" id="m-pback" onclick="pBack()" style="display:none">← Back</button>
       <button class="btn btn-acc" id="m-pnext" onclick="pNext()" style="flex:1">Next →</button>
     </div>
-    <p id="m-pfooter" style="margin-top:16px;font-size:12px;color:var(--mut);text-align:center;line-height:1.7">This lets us filter notes to your stream. Change it anytime.</p>
+    <p id="m-pfooter" style="margin-top:16px;font-size:12px;color:var(--mut);text-align:center;line-height:1.7">This filters notes to your stream. Change anytime.</p>
   </div>
 </div>
 
-<!-- ══════════ PREVIEW MODAL ══════════ -->
+<!-- PREVIEW MODAL -->
 <div class="overlay" id="m-prev" style="display:none" onclick="if(event.target===this)closePrev()">
   <div class="modal" style="max-width:980px;height:90vh;display:flex;flex-direction:column;overflow:hidden">
     <div style="padding:14px 20px;border-bottom:1px solid var(--bdr);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;background:var(--card)">
@@ -286,7 +264,7 @@ header{position:sticky;top:0;z-index:100;background:rgba(13,12,29,.92);border-bo
         <p id="pv-meta" style="color:var(--mut);font-size:12px;margin-top:2px"></p>
       </div>
       <div style="display:flex;gap:8px;margin-left:16px;flex-shrink:0">
-        <button class="btn btn-ghost btn-sm" onclick="openSum()"><svg width="12" height="12"><use href="#I-star"/></svg>AI Summary</button>
+        <button class="btn btn-ghost btn-sm" onclick="openSumFor(activeNote?.id)"><svg width="12" height="12"><use href="#I-star"/></svg>AI Summary</button>
         <button onclick="closePrev()" style="background:none;border:none;cursor:pointer;color:var(--mut);padding:6px;display:flex;align-items:center"><svg width="20" height="20"><use href="#I-x"/></svg></button>
       </div>
     </div>
@@ -295,16 +273,16 @@ header{position:sticky;top:0;z-index:100;background:rgba(13,12,29,.92);border-bo
         <span class="spin">⟳</span> Fetching PDF…
       </div>
       <iframe id="pv-frame" style="width:100%;height:100%;border:none;display:none" title="PDF Preview"></iframe>
-      <div id="pv-err" style="position:absolute;inset:0;display:none;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:40px;gap:12px;color:var(--mut)">
+      <div id="pv-err" style="position:absolute;inset:0;display:none;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:40px;gap:14px;color:var(--mut)">
         <svg width="36" height="36" style="opacity:.4"><use href="#I-warn"/></svg>
         <p id="pv-emsg" style="font-size:14px;max-width:400px;line-height:1.6"></p>
-        <a id="pv-direct" href="#" target="_blank" class="btn btn-ghost btn-sm" style="display:none">Open PDF directly</a>
+        <a id="pv-direct" href="#" target="_blank" class="btn btn-ghost btn-sm" style="display:none">Open PDF in new tab</a>
       </div>
     </div>
   </div>
 </div>
 
-<!-- ══════════ SUMMARIZE MODAL ══════════ -->
+<!-- SUMMARIZE MODAL -->
 <div class="overlay" id="m-sum" style="display:none" onclick="if(event.target===this)closeSum()">
   <div class="modal fade-up" style="max-width:540px;padding:32px">
     <button onclick="closeSum()" style="position:absolute;top:16px;right:16px;background:none;border:none;cursor:pointer;color:var(--mut)"><svg width="18" height="18"><use href="#I-x"/></svg></button>
@@ -356,41 +334,15 @@ header{position:sticky;top:0;z-index:100;background:rgba(13,12,29,.92);border-bo
   </div>
 </div>
 
-
 <script>
-/* ══════════════════════════════════════════════════════════
-   ██████████  CONFIGURATION  ██████████
-   ══════════════════════════════════════════════════════════
-
-   WEBHOOK_UPLOADS  → your #all-uploads Discord channel webhook
-                      posts compact: Subject | Faculty | Note ID
-
-   FACULTY_WEBHOOKS → map of faculty name → webhook URL for that
-                      faculty's channel (full detailed embed)
-                      Leave empty {} if you haven't set those up yet.
-                      Example:
-                        'Architecture': 'https://discord.com/api/webhooks/...',
-                        'Civil Engineering': 'https://discord.com/api/webhooks/...',
-
-   BLOB_ID          → shared notes database (jsonblob.com, free).
-                      null  = auto-creates on first load, shows owner banner.
-                      'xxx' = all users share this DB. Set this after first run.
-   ══════════════════════════════════════════════════════════ */
-
-const WEBHOOK_UPLOADS = 'https://discord.com/api/webhooks/1491774008184537108/9CGbkKA88b8tG61tQOMC2V1s0T_Cqbn6hzeGzO9IihvF_LWAnqRK5M6byoLPLHto7XPX';
-
-const FACULTY_WEBHOOKS = {
-  // Add faculty-specific webhook URLs here once you create those channels:
-  // 'Architecture':          'https://discord.com/api/webhooks/...',
-  // 'Civil Engineering':     'https://discord.com/api/webhooks/...',
-  // 'Computer Engineering':  'https://discord.com/api/webhooks/...',
-};
-
-const BLOB_ID = null; // ← OWNER: replace null with your blob ID after first run
-
-/* ── internals ── */
-const BLOB_API  = 'https://jsonblob.com/api/jsonBlob';
-const MAX_BYTES = 25 * 1024 * 1024; // 25 MB — Discord's actual free-server limit
+/* ═══════════════════════════════════════════════
+   HARDCODED CONFIG — do not change these
+   ═══════════════════════════════════════════════ */
+const WEBHOOK  = 'https://discord.com/api/webhooks/1491774008184537108/9CGbkKA88b8tG61tQOMC2V1s0T_Cqbn6hzeGzO9IihvF_LWAnqRK5M6byoLPLHto7XPX';
+const GIST_ID  = 'd917447e1711186ba4782748694cb81b';
+const GH_TOKEN = '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';
+const GIST_FILE = 'notes.json';
+const MAX_BYTES = 25 * 1024 * 1024;
 
 const FACULTIES = [
   'Architecture','Civil Engineering','Computer Engineering','Electrical Engineering',
@@ -401,96 +353,109 @@ const FACULTIES = [
 let notes = [], profile = JSON.parse(localStorage.getItem('sn_profile')||'null');
 let selFile = null, activeNote = null, _blobUrl = null;
 
-const $ = id => document.getElementById(id);
+const $   = id => document.getElementById(id);
 const uid  = () => Date.now().toString(36)+Math.random().toString(36).slice(2);
 const fmtB = b => b < 1048576 ? (b/1024).toFixed(1)+' KB' : (b/1048576).toFixed(2)+' MB';
 const fmtD = d => new Date(d).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
 
-/* ════════════════════════════════════════
-   SHARED DATABASE  (jsonblob.com)
-   ════════════════════════════════════════ */
-const getBlobId = () => BLOB_ID || localStorage.getItem('sn_blob') || null;
-
+/* ═══════════════════════════════════════════════
+   GITHUB GIST DATABASE
+   Read  → GET  /gists/:id  (public, no auth needed)
+   Write → PATCH /gists/:id (needs token)
+   ═══════════════════════════════════════════════ */
 async function dbRead(){
-  const id = getBlobId(); if(!id) return [];
   try {
-    const r = await fetch(`${BLOB_API}/${id}`,{headers:{Accept:'application/json'}});
-    return r.ok ? r.json() : null;
-  } catch { return null; }
+    // Use raw URL for reading — no auth needed, no CORS issues
+    const r = await fetch(`https://gist.githubusercontent.com/sweekar1/${GIST_ID}/raw/${GIST_FILE}?t=${Date.now()}`);
+    if(!r.ok) throw new Error('read failed');
+    return await r.json();
+  } catch {
+    // Fallback to API
+    try {
+      const r = await fetch(`https://api.github.com/gists/${GIST_ID}`,{
+        headers:{ Authorization:`Bearer ${GH_TOKEN}`, Accept:'application/vnd.github+json' }
+      });
+      if(!r.ok) throw new Error();
+      const g = await r.json();
+      const content = g.files[GIST_FILE]?.content || '[]';
+      return JSON.parse(content);
+    } catch { return null; }
+  }
 }
 
 async function dbWrite(arr){
-  const id = getBlobId(); if(!id) return;
   try {
-    await fetch(`${BLOB_API}/${id}`,{
-      method:'PUT', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify(arr)
+    await fetch(`https://api.github.com/gists/${GIST_ID}`, {
+      method: 'PATCH',
+      headers:{
+        Authorization: `Bearer ${GH_TOKEN}`,
+        Accept: 'application/vnd.github+json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        files:{ [GIST_FILE]:{ content: JSON.stringify(arr, null, 2) } }
+      })
     });
-  } catch{}
+  } catch(e){ console.warn('dbWrite failed:', e); }
 }
 
-async function dbCreate(){
-  const r = await fetch(BLOB_API,{
-    method:'POST', headers:{'Content-Type':'application/json'},
-    body: JSON.stringify([])
-  });
-  if(!r.ok) throw new Error('Could not create shared storage');
-  const loc = r.headers.get('Location')||'';
-  return loc.split('/').pop();
-}
-
-/* ════════════════════════════════════════
+/* ═══════════════════════════════════════════════
    BOOT
-   ════════════════════════════════════════ */
+   ═══════════════════════════════════════════════ */
 (async function boot(){
-  // populate faculty dropdown
-  const sel = $('ff');
-  FACULTIES.forEach(f=>{ const o=document.createElement('option'); o.value=o.textContent=f; sel.appendChild(o); });
-
+  FACULTIES.forEach(f=>{
+    const o = document.createElement('option');
+    o.value = o.textContent = f;
+    $('ff').appendChild(o);
+  });
   if(profile){ updateChip(); applyPF(); }
   else openProfile();
-
   goPage('browse');
   await loadNotes(false);
 })();
 
 async function loadNotes(spin){
-  if(spin){ $('ref-ico').innerHTML='<animateTransform/>'; $('ref-btn').innerHTML='<span class="spin" style="font-size:13px;color:var(--mut)">⟳</span>'; }
-
-  showSkels();
-
-  let id = getBlobId();
-  if(!id){
-    // First ever load — create shared storage
-    try {
-      id = await dbCreate();
-      localStorage.setItem('sn_blob', id);
-      $('ob-id').textContent = id;
-      $('ob').style.display = 'block';
-    } catch(e){
-      $('br-sub').textContent = 'Could not create shared storage. Check internet connection.';
-      renderGrid(); return;
-    }
+  if(spin){
+    $('ref-btn').innerHTML = '<span class="spin" style="font-size:13px;color:var(--mut)">⟳</span>';
   }
-
+  showSkels();
   const data = await dbRead();
   if(data === null){
-    $('br-sub').innerHTML = '<span style="color:var(--red)">Could not load notes — shared storage unreachable. Try refreshing.</span>';
+    $('br-sub').innerHTML = '<span style="color:var(--red)">Could not load notes — check your internet connection and try refreshing.</span>';
   } else {
     notes = data;
   }
   renderGrid();
-  if(spin) setTimeout(()=>{ $('ref-btn').innerHTML='<svg width="13" height="13" id="ref-ico"><use href="#I-ref"/></svg>'; }, 400);
+  if(spin){
+    setTimeout(()=>{
+      $('ref-btn').innerHTML = '<svg width="13" height="13"><use href="#I-ref"/></svg>';
+    }, 400);
+  }
 }
 
 function showSkels(){
-  const g=$('grid'); g.innerHTML='';
-  for(let i=0;i<6;i++) g.innerHTML+=`<div class="skel"><div style="display:flex;gap:12px;margin-bottom:16px"><div style="width:46px;height:54px;background:var(--bdr);border-radius:9px;flex-shrink:0"></div><div style="flex:1"><div class="sl" style="width:65%"></div><div class="sl" style="width:40%"></div></div></div><div style="display:flex;gap:6px;margin-bottom:16px"><div class="sl" style="width:60px;height:22px;border-radius:20px;margin:0"></div><div class="sl" style="width:55px;height:22px;border-radius:20px;margin:0"></div></div><div style="border-top:1px solid var(--bdr);padding-top:14px;display:flex;justify-content:space-between"><div class="sl" style="width:90px;height:10px;margin:0"></div><div class="sl" style="width:80px;height:28px;border-radius:8px;margin:0"></div></div></div>`;
+  const g = $('grid'); g.innerHTML = '';
+  for(let i=0;i<6;i++){
+    g.innerHTML += `<div class="skel">
+      <div style="display:flex;gap:12px;margin-bottom:16px">
+        <div style="width:46px;height:54px;background:var(--bdr);border-radius:9px;flex-shrink:0"></div>
+        <div style="flex:1"><div class="sl" style="width:65%"></div><div class="sl" style="width:40%"></div></div>
+      </div>
+      <div style="display:flex;gap:6px;margin-bottom:16px">
+        <div class="sl" style="width:60px;height:22px;border-radius:20px;margin:0"></div>
+        <div class="sl" style="width:55px;height:22px;border-radius:20px;margin:0"></div>
+      </div>
+      <div style="border-top:1px solid var(--bdr);padding-top:14px;display:flex;justify-content:space-between">
+        <div class="sl" style="width:90px;height:10px;margin:0"></div>
+        <div class="sl" style="width:80px;height:28px;border-radius:8px;margin:0"></div>
+      </div>
+    </div>`;
+  }
 }
 
-/* ════════════════════════════════════════
+/* ═══════════════════════════════════════════════
    ROUTING
-   ════════════════════════════════════════ */
+   ═══════════════════════════════════════════════ */
 function goPage(name){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   $('page-'+name).classList.add('active');
@@ -499,29 +464,31 @@ function goPage(name){
   window.scrollTo(0,0);
 }
 
-/* ════════════════════════════════════════
+/* ═══════════════════════════════════════════════
    PROFILE
-   ════════════════════════════════════════ */
+   ═══════════════════════════════════════════════ */
 const PSTEPS = [
-  {q:"What's your program?",     k:'faculty',  t:'sel', opts:FACULTIES,                                        lb:'Faculty'},
-  {q:"What year are you in?",    k:'year',     t:'sel', opts:['1st Year','2nd Year','3rd Year','4th Year','5th Year'], lb:'Year'},
-  {q:"Which part / semester?",   k:'semester', t:'sel', opts:['1st Part','2nd Part'],                           lb:'Semester'},
-  {q:"Your college (optional)",  k:'college',  t:'inp', ph:'e.g. IOE Pulchowk, KU'},
+  {q:"What's your program?",    k:'faculty',  t:'sel', opts:FACULTIES, lb:'Faculty'},
+  {q:"What year are you in?",   k:'year',     t:'sel', opts:['1st Year','2nd Year','3rd Year','4th Year','5th Year'], lb:'Year'},
+  {q:"Which part / semester?",  k:'semester', t:'sel', opts:['1st Part','2nd Part'], lb:'Semester'},
+  {q:"Your college (optional)", k:'college',  t:'inp', ph:'e.g. IOE Pulchowk, KU'},
 ];
 let ps=0, pd={faculty:'',year:'',semester:'',college:''};
 
 function openProfile(){
   pd = profile?{...profile}:{faculty:'',year:'',semester:'',college:''};
-  ps=0; $('m-pclose').style.display=profile?'block':'none';
-  $('m-pfooter').style.display=profile?'none':'block';
-  renderPS(); $('m-profile').style.display='flex';
+  ps = 0;
+  $('m-pclose').style.display = profile?'block':'none';
+  $('m-pfooter').style.display = profile?'none':'block';
+  renderPS();
+  $('m-profile').style.display = 'flex';
 }
 function closeProfile(){ $('m-profile').style.display='none'; }
 
 function updateChip(){
   if(!profile) return;
   $('pchip').style.display='flex';
-  $('pchip-lbl').textContent=profile.faculty.split(' ')[0]+' · '+profile.year;
+  $('pchip-lbl').textContent = profile.faculty.split(' ')[0]+' · '+profile.year;
 }
 function applyPF(){
   if(!profile) return;
@@ -529,9 +496,13 @@ function applyPF(){
 }
 
 function renderPS(){
-  const s=PSTEPS[ps];
-  const bar=$('m-pbar'); bar.innerHTML='';
-  PSTEPS.forEach((_,i)=>{ const d=document.createElement('div'); d.style.cssText=`flex:1;height:3px;border-radius:3px;background:${i<=ps?'var(--acc)':'var(--bdr)'};transition:background .25s`; bar.appendChild(d); });
+  const s = PSTEPS[ps];
+  const bar = $('m-pbar'); bar.innerHTML='';
+  PSTEPS.forEach((_,i)=>{
+    const d=document.createElement('div');
+    d.style.cssText=`flex:1;height:3px;border-radius:3px;background:${i<=ps?'var(--acc)':'var(--bdr)'};transition:background .25s`;
+    bar.appendChild(d);
+  });
   $('m-psteplbl').textContent=`Step ${ps+1} of ${PSTEPS.length}`;
   $('m-ptitle').textContent=s.q;
   $('m-pback').style.display=ps>0?'inline-flex':'none';
@@ -560,9 +531,9 @@ function pNext(){
 }
 function pBack(){ if(ps>0){ ps--; renderPS(); } }
 
-/* ════════════════════════════════════════
-   BROWSE / FILTER
-   ════════════════════════════════════════ */
+/* ═══════════════════════════════════════════════
+   BROWSE & FILTER
+   ═══════════════════════════════════════════════ */
 function clearF(){ $('fs').value=''; $('ff').value=''; $('fy').value=''; $('fm').value=''; renderGrid(); }
 
 function renderGrid(){
@@ -580,10 +551,14 @@ function renderGrid(){
 
   $('br-title').textContent = fac||(profile?.faculty)||'All Study Notes';
   $('br-sub').innerHTML = `Showing <strong style="color:var(--acc)">${list.length}</strong> of ${notes.length} notes`+(profile?` · ${profile.year} · ${profile.semester}`:'');
-  $('clr-btn').style.display=hasF?'inline-flex':'none';
+  $('clr-btn').style.display = hasF?'inline-flex':'none';
 
   const pills=$('pills'); pills.innerHTML='';
-  const mkP=(label,clr)=>{ const s=document.createElement('span'); s.className='pill'; s.innerHTML=`${label}<button onclick="${clr}"><svg width="11" height="11"><use href="#I-x"/></svg></button>`; pills.appendChild(s); };
+  const mkP=(label,clr)=>{
+    const s=document.createElement('span'); s.className='pill';
+    s.innerHTML=`${label}<button onclick="${clr}"><svg width="11" height="11"><use href="#I-x"/></svg></button>`;
+    pills.appendChild(s);
+  };
   if(fac) mkP(fac,`$('ff').value='';renderGrid()`);
   if(yr)  mkP(yr, `$('fy').value='';renderGrid()`);
   if(sem) mkP(sem,`$('fm').value='';renderGrid()`);
@@ -592,9 +567,13 @@ function renderGrid(){
   const g=$('grid'); g.innerHTML='';
   if(!list.length){
     g.innerHTML=`<div style="grid-column:1/-1;text-align:center;padding:80px 24px">
-      <div style="width:64px;height:64px;background:rgba(244,162,97,.08);border:1px solid rgba(244,162,97,.15);border-radius:16px;display:flex;align-items:center;justify-content:center;margin:0 auto 20px"><svg width="28" height="28" style="color:var(--acc);opacity:.6"><use href="#I-file"/></svg></div>
+      <div style="width:64px;height:64px;background:rgba(244,162,97,.08);border:1px solid rgba(244,162,97,.15);border-radius:16px;display:flex;align-items:center;justify-content:center;margin:0 auto 20px">
+        <svg width="28" height="28" style="color:var(--acc);opacity:.6"><use href="#I-file"/></svg>
+      </div>
       <h3 style="font-size:22px;margin-bottom:8px">No notes found</h3>
-      <p style="color:var(--mut);font-size:14px;margin-bottom:28px;max-width:340px;margin-left:auto;margin-right:auto">${notes.length===0?'Be the first to share a note with your peers!':'Try adjusting or clearing your filters.'}</p>
+      <p style="color:var(--mut);font-size:14px;margin-bottom:28px;max-width:340px;margin-left:auto;margin-right:auto">
+        ${notes.length===0?'Be the first to share a note!':'Try adjusting or clearing your filters.'}
+      </p>
       <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
         ${hasF?`<button class="btn btn-ghost" onclick="clearF()"><svg width="14" height="14"><use href="#I-x"/></svg>Clear Filters</button>`:''}
         <button class="btn btn-acc" onclick="goPage('upload')"><svg width="14" height="14"><use href="#I-plus"/></svg>Upload a Note</button>
@@ -606,7 +585,8 @@ function renderGrid(){
 }
 
 function mkCard(n,i){
-  const d=document.createElement('div'); d.className='card fade-up'; d.style.animationDelay=`${i*35}ms`;
+  const d=document.createElement('div');
+  d.className='card fade-up'; d.style.animationDelay=`${i*35}ms`;
   d.innerHTML=`
     <div style="display:flex;gap:14px;margin-bottom:14px">
       <div style="width:46px;height:54px;background:rgba(244,162,97,.1);border:1px solid rgba(244,162,97,.18);border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0">
@@ -644,9 +624,9 @@ async function delNote(id){
   renderGrid();
 }
 
-/* ════════════════════════════════════════
+/* ═══════════════════════════════════════════════
    UPLOAD
-   ════════════════════════════════════════ */
+   ═══════════════════════════════════════════════ */
 function resetForm(){
   selFile=null;
   $('dz-idle').style.display='block'; $('dz-ok').style.display='none';
@@ -679,60 +659,42 @@ function showUE(msg){
   $('up-err').innerHTML=`<div class="err-box"><svg width="15" height="15" style="flex-shrink:0;margin-top:1px"><use href="#I-warn"/></svg><span>${msg}</span></div>`;
 }
 
-/* ── PDF Compression (canvas-based, for files 25-100 MB) ──────────
-   Renders each page at 0.75 scale, 80% JPEG quality, rebuilds PDF.
-   Requires pdf.js (loaded below) and pdf-lib.
-   ──────────────────────────────────────────────────────────────── */
+/* canvas-based PDF compression for files > 25MB */
 async function compressPDF(file){
-  // We load pdf.js lazily
   if(!window.pdfjsLib){
-    await new Promise((res,rej)=>{
-      const s=document.createElement('script');
-      s.src='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';
-      s.onload=res; s.onerror=rej; document.head.appendChild(s);
-    });
+    await new Promise((res,rej)=>{ const s=document.createElement('script'); s.src='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js'; s.onload=res; s.onerror=rej; document.head.appendChild(s); });
     window.pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
   }
   if(!window.PDFLib){
-    await new Promise((res,rej)=>{
-      const s=document.createElement('script');
-      s.src='https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js';
-      s.onload=res; s.onerror=rej; document.head.appendChild(s);
-    });
+    await new Promise((res,rej)=>{ const s=document.createElement('script'); s.src='https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js'; s.onload=res; s.onerror=rej; document.head.appendChild(s); });
   }
-
-  const buf = await file.arrayBuffer();
-  const srcPdf = await pdfjsLib.getDocument({data:buf}).promise;
-  const newPdf = await PDFLib.PDFDocument.create();
-  const SCALE  = 0.72; // reduce dimensions ~28%
-  const QUALITY = 0.78; // JPEG quality
-
-  for(let i=1; i<=srcPdf.numPages; i++){
-    setP(20+Math.round((i/srcPdf.numPages)*55), `Compressing page ${i}/${srcPdf.numPages}…`);
-    const page = await srcPdf.getPage(i);
-    const vp   = page.getViewport({scale: SCALE});
-    const canvas = document.createElement('canvas');
+  const buf=await file.arrayBuffer();
+  const srcPdf=await pdfjsLib.getDocument({data:buf}).promise;
+  const newPdf=await PDFLib.PDFDocument.create();
+  for(let i=1;i<=srcPdf.numPages;i++){
+    setP(20+Math.round((i/srcPdf.numPages)*50),`Compressing page ${i} of ${srcPdf.numPages}…`);
+    const page=await srcPdf.getPage(i);
+    const vp=page.getViewport({scale:0.72});
+    const canvas=document.createElement('canvas');
     canvas.width=vp.width; canvas.height=vp.height;
-    const ctx=canvas.getContext('2d');
-    await page.render({canvasContext:ctx,viewport:vp}).promise;
-    const jpeg = canvas.toDataURL('image/jpeg', QUALITY);
-    const imgBytes = Uint8Array.from(atob(jpeg.split(',')[1]), c=>c.charCodeAt(0));
-    const embImg = await newPdf.embedJpg(imgBytes);
-    const p = newPdf.addPage([vp.width, vp.height]);
+    await page.render({canvasContext:canvas.getContext('2d'),viewport:vp}).promise;
+    const jpeg=canvas.toDataURL('image/jpeg',0.78);
+    const imgBytes=Uint8Array.from(atob(jpeg.split(',')[1]),c=>c.charCodeAt(0));
+    const embImg=await newPdf.embedJpg(imgBytes);
+    const p=newPdf.addPage([vp.width,vp.height]);
     p.drawImage(embImg,{x:0,y:0,width:vp.width,height:vp.height});
   }
-
-  const bytes = await newPdf.save();
-  return new File([bytes], file.name, {type:'application/pdf'});
+  const bytes=await newPdf.save();
+  return new File([bytes],file.name,{type:'application/pdf'});
 }
 
 async function doUpload(){
-  if(!selFile)                 { showUE('Please select a PDF file.'); return; }
+  if(!selFile)                  { showUE('Please select a PDF file.'); return; }
   if(!$('u-title').value.trim()){ showUE('Please enter a note title.'); return; }
-  if(!$('u-sub').value.trim()) { showUE('Please enter a subject / topic.'); return; }
-  if(!$('u-fac').value)        { showUE('Please select a faculty / program.'); return; }
-  if(!$('u-yr').value)         { showUE('Please select a year.'); return; }
-  if(!$('u-sem').value)        { showUE('Please select a semester / part.'); return; }
+  if(!$('u-sub').value.trim())  { showUE('Please enter a subject / topic.'); return; }
+  if(!$('u-fac').value)         { showUE('Please select a faculty / program.'); return; }
+  if(!$('u-yr').value)          { showUE('Please select a year.'); return; }
+  if(!$('u-sem').value)         { showUE('Please select a semester / part.'); return; }
 
   $('up-err').style.display='none';
   $('sub-btn').disabled=true; $('can-btn').disabled=true;
@@ -740,28 +702,26 @@ async function doUpload(){
 
   let fileToSend = selFile;
 
-  /* ── size check & compression ── */
   if(selFile.size > MAX_BYTES){
-    // Over 25 MB → try canvas compression
     if(selFile.size > 100*1024*1024){
       $('sub-btn').disabled=false; $('can-btn').disabled=false;
       $('sub-btn').innerHTML='<svg width="14" height="14"><use href="#I-up"/></svg>Upload Note';
-      showUE(`This PDF is ${fmtB(selFile.size)} — too large to compress in-browser (limit: 100 MB). Please compress it first at <a href="https://smallpdf.com/compress-pdf" target="_blank" style="color:var(--acc)">Smallpdf</a> or <a href="https://www.ilovepdf.com/compress_pdf" target="_blank" style="color:var(--acc)">ilovepdf</a>, then re-upload.`);
+      showUE(`File is ${fmtB(selFile.size)} — too large to compress here. Please use <a href="https://smallpdf.com/compress-pdf" target="_blank" style="color:var(--acc)">Smallpdf</a> first.`);
       return;
     }
-    setP(10,'Compressing PDF — this may take a moment…');
+    setP(10,'Compressing PDF…');
     try {
       fileToSend = await compressPDF(selFile);
       if(fileToSend.size > MAX_BYTES){
         $('sub-btn').disabled=false; $('can-btn').disabled=false;
         $('sub-btn').innerHTML='<svg width="14" height="14"><use href="#I-up"/></svg>Upload Note';
-        showUE(`Even after compression the file is ${fmtB(fileToSend.size)} — still over 25 MB. Please use <a href="https://smallpdf.com/compress-pdf" target="_blank" style="color:var(--acc)">Smallpdf</a> to reduce it further.`);
+        showUE(`Still ${fmtB(fileToSend.size)} after compression — please use <a href="https://smallpdf.com/compress-pdf" target="_blank" style="color:var(--acc)">Smallpdf</a> to reduce it further.`);
         return;
       }
     } catch(e){
       $('sub-btn').disabled=false; $('can-btn').disabled=false;
       $('sub-btn').innerHTML='<svg width="14" height="14"><use href="#I-up"/></svg>Upload Note';
-      showUE('Compression failed: '+e.message+'. Try compressing manually at Smallpdf.');
+      showUE('Compression failed: '+e.message);
       return;
     }
   }
@@ -775,56 +735,33 @@ async function doUpload(){
     semester: $('u-sem').value,
     college:  $('u-col').value.trim(),
     fileName: fileToSend.name,
-    fileSize: selFile.size,        // show original size
-    compressedSize: fileToSend.size,
+    fileSize: selFile.size,
     uploadedAt: new Date().toISOString(),
     cdnUrl: null
   };
 
-  setP(78,'Sending to Discord…');
+  setP(75,'Uploading to Discord…');
 
   try {
-    /* ── POST to #all-uploads: compact message ── */
-    const compactMsg = {
-      content: `📄 **${note.subject}** · ${note.faculty}\n🆔 \`${note.id}\``
-    };
-    const fd1 = new FormData();
-    fd1.append('payload_json', JSON.stringify(compactMsg));
-    fd1.append('file', fileToSend, note.fileName);
-    // ?wait=true → Discord returns message JSON with attachment URL
-    const r1 = await fetch(WEBHOOK_UPLOADS+'?wait=true', {method:'POST', body:fd1});
-    if(!r1.ok){ const t=await r1.text(); throw new Error(`Discord error ${r1.status}: ${t.slice(0,120)}`); }
-    const msg1 = await r1.json();
-    const cdnUrl = msg1?.attachments?.[0]?.url;
-    if(!cdnUrl) throw new Error('Discord did not return a file URL. Check the webhook is valid and the file is under 25 MB.');
+    /* Send to Discord — compact message in #all-uploads */
+    const fd = new FormData();
+    fd.append('payload_json', JSON.stringify({
+      content: `📄 **${note.subject}** · ${note.faculty}\n📅 ${note.year} · ${note.semester}${note.college?' · '+note.college:''}\n🆔 \`${note.id}\``
+    }));
+    fd.append('file', fileToSend, note.fileName);
+
+    const dRes = await fetch(WEBHOOK+'?wait=true', {method:'POST', body:fd});
+    if(!dRes.ok){
+      const t = await dRes.text();
+      throw new Error(`Discord error ${dRes.status}: ${t.slice(0,150)}`);
+    }
+    const dMsg = await dRes.json();
+    const cdnUrl = dMsg?.attachments?.[0]?.url;
+    if(!cdnUrl) throw new Error('Discord did not return a file URL. File may be over 25 MB.');
     note.cdnUrl = cdnUrl;
 
-    /* ── POST to faculty-specific channel (if webhook exists): full details ── */
-    const facWebhook = FACULTY_WEBHOOKS[note.faculty];
-    if(facWebhook){
-      const detailEmbed = {
-        title: `📄 ${note.title}`,
-        color: 0xf4a261,
-        fields:[
-          {name:'📚 Subject',  value:note.subject,         inline:true},
-          {name:'🏛️ Faculty', value:note.faculty,          inline:true},
-          {name:'📅 Year',     value:note.year,             inline:true},
-          {name:'🗓️ Semester',value:note.semester,         inline:true},
-          {name:'🏫 College',  value:note.college||'—',     inline:true},
-          {name:'📦 Size',     value:fmtB(note.fileSize),   inline:true},
-          {name:'🔗 View PDF', value:`[Open PDF](${cdnUrl})`,inline:false},
-          {name:'🆔 Note ID',  value:'`'+note.id+'`',      inline:false},
-        ],
-        timestamp: note.uploadedAt,
-        footer: {text:'Sab Notes'}
-      };
-      const fd2 = new FormData();
-      fd2.append('payload_json', JSON.stringify({embeds:[detailEmbed]}));
-      await fetch(facWebhook, {method:'POST', body:fd2}).catch(()=>{});
-    }
-
-    /* ── save to shared database ── */
-    setP(92,'Saving to shared database…');
+    /* Save to shared Gist database */
+    setP(90,'Saving to shared database…');
     const latest = await dbRead() || [];
     latest.unshift(note);
     notes = latest;
@@ -842,10 +779,10 @@ async function doUpload(){
   }
 }
 
-/* ════════════════════════════════════════
-   PREVIEW  — fetch as blob to bypass
-   Discord CDN's X-Frame-Options header
-   ════════════════════════════════════════ */
+/* ═══════════════════════════════════════════════
+   PREVIEW  — fetch as blob to bypass Discord CDN
+   X-Frame-Options (which breaks direct iframe src)
+   ═══════════════════════════════════════════════ */
 function openPrev(id){
   activeNote = notes.find(n=>n.id===id); if(!activeNote) return;
   $('pv-title').textContent = activeNote.title;
@@ -857,31 +794,26 @@ function openPrev(id){
 
   if(_blobUrl){ URL.revokeObjectURL(_blobUrl); _blobUrl=null; }
 
-  if(!activeNote.cdnUrl){
-    showPE('No file URL stored for this note. Delete it and re-upload.'); return;
-  }
+  if(!activeNote.cdnUrl){ showPE('No file URL for this note. Delete and re-upload it.'); return; }
 
-  // Fetch PDF → blob → local blob:// URL → iframe (no X-Frame-Options restriction)
   fetch(activeNote.cdnUrl)
-    .then(r=>{ if(!r.ok) throw new Error(`HTTP ${r.status} from Discord CDN`); return r.blob(); })
+    .then(r=>{ if(!r.ok) throw new Error(`HTTP ${r.status}`); return r.blob(); })
     .then(blob=>{
-      if(!blob.size) throw new Error('Empty response from Discord — CDN link may have expired.');
+      if(!blob.size) throw new Error('Empty response — link may have expired.');
       _blobUrl = URL.createObjectURL(blob);
-      const fr=$('pv-frame');
-      fr.onload=()=>{ $('pv-load').style.display='none'; fr.style.display='block'; };
-      fr.src=_blobUrl;
+      const fr = $('pv-frame');
+      fr.onload = ()=>{ $('pv-load').style.display='none'; fr.style.display='block'; };
+      fr.src = _blobUrl;
     })
-    .catch(e=>{
-      showPE(`Could not load PDF: ${e.message}. The Discord CDN link may have expired — re-upload the note to get a fresh link.`, activeNote.cdnUrl);
-    });
+    .catch(e=>showPE(`Could not load PDF: ${e.message}`, activeNote.cdnUrl));
 }
 function showPE(msg, directUrl){
   $('pv-load').style.display='none';
   const el=$('pv-err'); el.style.display='flex';
   $('pv-emsg').textContent=msg;
-  const link=$('pv-direct');
-  if(directUrl){ link.href=directUrl; link.style.display='inline-flex'; }
-  else link.style.display='none';
+  const lnk=$('pv-direct');
+  if(directUrl){ lnk.href=directUrl; lnk.style.display='inline-flex'; }
+  else lnk.style.display='none';
 }
 function closePrev(){
   $('m-prev').style.display='none';
@@ -889,18 +821,19 @@ function closePrev(){
   if(_blobUrl){ URL.revokeObjectURL(_blobUrl); _blobUrl=null; }
 }
 
-/* ════════════════════════════════════════
+/* ═══════════════════════════════════════════════
    SUMMARIZE
-   ════════════════════════════════════════ */
-function openSum(){ closePrev(); if(activeNote) openSumFor(activeNote.id); }
-function closeSum(){ $('m-sum').style.display='none'; }
-function showSumChoose(){ $('sum-choose').style.display='block'; $('sum-loading').style.display='none'; $('sum-result').style.display='none'; }
+   ═══════════════════════════════════════════════ */
 function openSumFor(id){
-  activeNote=notes.find(n=>n.id===id); if(!activeNote) return;
+  if(!id) return;
+  activeNote = notes.find(n=>n.id===id); if(!activeNote) return;
   $('sum-notename').textContent=activeNote.title;
   $('sum-err').style.display='none';
-  showSumChoose(); $('m-sum').style.display='flex';
+  showSumChoose();
+  $('m-sum').style.display='flex';
 }
+function closeSum(){ $('m-sum').style.display='none'; }
+function showSumChoose(){ $('sum-choose').style.display='block'; $('sum-loading').style.display='none'; $('sum-result').style.display='none'; }
 
 async function runClaude(){
   if(!activeNote?.cdnUrl){
@@ -911,7 +844,7 @@ async function runClaude(){
   $('sum-choose').style.display='none'; $('sum-loading').style.display='block';
   try {
     const r=await fetch(activeNote.cdnUrl);
-    if(!r.ok) throw new Error(`Could not fetch PDF (HTTP ${r.status}). CDN link may be expired.`);
+    if(!r.ok) throw new Error(`Could not fetch PDF (HTTP ${r.status})`);
     const buf=await r.arrayBuffer();
     const bytes=new Uint8Array(buf); let bin='';
     for(let i=0;i<bytes.length;i++) bin+=String.fromCharCode(bytes[i]);
@@ -922,7 +855,7 @@ async function runClaude(){
         model:'claude-sonnet-4-20250514', max_tokens:1000,
         messages:[{role:'user',content:[
           {type:'document',source:{type:'base64',media_type:'application/pdf',data:b64}},
-          {type:'text',text:'Give a clear, well-structured summary of this study note. Include key topics, concepts, definitions, formulas, and revision points. Format it as a helpful review guide for a student studying for exams.'}
+          {type:'text',text:'Give a clear, well-structured summary of this study note. Include key topics, concepts, definitions, formulas, and revision points. Format it as a helpful review guide for a student.'}
         ]}]
       })
     });
@@ -936,7 +869,6 @@ async function runClaude(){
     $('sum-err').innerHTML=`<div class="err-box"><svg width="14" height="14"><use href="#I-warn"/></svg>${e.message}</div>`;
   }
 }
-
 function copySummary(){
   navigator.clipboard.writeText($('sum-txt').textContent).catch(()=>{});
   $('copy-btn').innerHTML='<svg width="13" height="13"><use href="#I-ok"/></svg>Copied!';
