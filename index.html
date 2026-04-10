@@ -1,0 +1,947 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Sab Notes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0d0c1d;--surf:#161527;--card:#1c1b31;--bdr:#2a2850;
+  --acc:#f4a261;--ach:#e8894a;--grn:#52b788;
+  --txt:#edf2f4;--mut:#8d99ae;--red:#e07a5f;
+}
+html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif;min-height:100vh;font-size:15px}
+h1,h2,h3{font-family:'Crimson Pro',serif;font-weight:700;line-height:1.15}
+a{color:var(--acc);text-decoration:none}
+a:hover{text-decoration:underline}
+p{line-height:1.6}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:10px 20px;border-radius:8px;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;transition:all .18s;white-space:nowrap;line-height:1;vertical-align:middle}
+.btn:disabled{opacity:.4;cursor:not-allowed;transform:none!important}
+.btn-acc{background:var(--acc);color:#0d0c1d}
+.btn-acc:hover:not(:disabled){background:var(--ach);transform:translateY(-1px)}
+.btn-ghost{background:transparent;color:var(--mut);border:1px solid var(--bdr)}
+.btn-ghost:hover:not(:disabled){color:var(--txt);border-color:var(--mut)}
+.btn-danger{background:transparent;color:var(--red);border:1px solid rgba(224,122,95,.3)}
+.btn-danger:hover:not(:disabled){background:rgba(224,122,95,.08);border-color:var(--red)}
+.btn-sm{padding:6px 12px;font-size:13px}
+input,select,textarea{width:100%;padding:10px 14px;background:var(--surf);border:1px solid var(--bdr);border-radius:8px;color:var(--txt);font-family:'DM Sans',sans-serif;font-size:14px;outline:none;transition:border-color .18s}
+input:focus,select:focus,textarea:focus{border-color:var(--acc)}
+select option{background:var(--surf)}
+::placeholder{color:var(--mut)}
+.card{background:var(--card);border:1px solid var(--bdr);border-radius:14px;transition:border-color .18s,transform .18s,box-shadow .18s;padding:20px}
+.card:hover{border-color:rgba(244,162,97,.35);transform:translateY(-2px);box-shadow:0 8px 28px rgba(244,162,97,.08)}
+.tag{display:inline-flex;align-items:center;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:500;background:var(--surf);border:1px solid var(--bdr);color:var(--mut);white-space:nowrap}
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.82);display:flex;align-items:center;justify-content:center;z-index:200;padding:16px;backdrop-filter:blur(6px)}
+.modal{background:var(--card);border:1px solid var(--bdr);border-radius:18px;width:100%;position:relative;max-height:92vh;overflow-y:auto}
+.dropzone{border:2px dashed var(--bdr);border-radius:12px;padding:48px 24px;text-align:center;cursor:pointer;transition:all .2s}
+.dropzone:hover,.dropzone.drag{border-color:var(--acc);background:rgba(244,162,97,.04)}
+.prog-bar{height:5px;background:var(--bdr);border-radius:4px;overflow:hidden;margin-top:10px}
+.prog-fill{height:100%;border-radius:4px;background:var(--acc);transition:width .4s ease,background .3s}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@keyframes shimmer{from{transform:translateX(-100%)}to{transform:translateX(100%)}}
+.spin{animation:spin .9s linear infinite;display:inline-block}
+.fade-up{animation:fadeUp .28s ease both}
+.pill{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:20px;font-size:12px;font-weight:500;background:rgba(244,162,97,.12);border:1px solid rgba(244,162,97,.25);color:var(--acc)}
+.pill button{background:none;border:none;cursor:pointer;color:var(--acc);padding:0;line-height:1;display:flex;align-items:center}
+.label{display:block;font-size:11px;font-weight:600;color:var(--mut);margin-bottom:6px;letter-spacing:.06em;text-transform:uppercase}
+.err-box{padding:14px 16px;background:rgba(224,122,95,.08);border:1px solid rgba(224,122,95,.25);border-radius:10px;color:var(--red);font-size:13px;line-height:1.7;display:flex;gap:10px;align-items:flex-start}
+.scrolly{overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--bdr) transparent}
+header{position:sticky;top:0;z-index:100;background:rgba(13,12,29,.92);border-bottom:1px solid var(--bdr);backdrop-filter:blur(16px)}
+.hinner{max-width:1200px;margin:0 auto;padding:0 24px;height:62px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.logo{background:none;border:none;cursor:pointer;display:flex;align-items:center;gap:10px}
+.logo-icon{width:34px;height:34px;background:var(--acc);border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.logo-text{font-family:'Crimson Pro',serif;font-size:22px;font-weight:700;color:var(--txt)}
+#app{min-height:100vh}
+.page{display:none}
+.page.active{display:block}
+.inner{max-width:1200px;margin:0 auto;padding:36px 24px}
+.inner-sm{max-width:700px;margin:0 auto;padding:36px 24px}
+.notes-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:18px}
+.filter-bar{background:var(--card);border:1px solid var(--bdr);border-radius:12px;padding:14px 16px;margin-bottom:20px;display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.filter-bar select,.filter-bar input{flex:1 1 auto;min-width:140px;background:var(--surf)}
+.sw{flex:2 1 200px;min-width:160px;position:relative}
+.sw input{padding-left:36px}
+.skel{background:var(--card);border:1px solid var(--bdr);border-radius:14px;padding:20px;overflow:hidden;position:relative}
+.skel::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.04),transparent);animation:shimmer 1.5s infinite}
+.sl{height:12px;background:var(--bdr);border-radius:6px;margin-bottom:10px}
+/* owner setup banner — only shows on very first load */
+#ob{display:none;background:rgba(244,162,97,.1);border-bottom:1px solid rgba(244,162,97,.25);padding:11px 20px;font-size:13px;color:#c8874e;text-align:center;line-height:1.8}
+#ob code{background:rgba(0,0,0,.3);padding:2px 7px;border-radius:4px;font-family:monospace;font-size:12px;color:var(--acc);cursor:pointer;user-select:all}
+.nav-r{display:flex;align-items:center;gap:8px}
+.pchip{background:none;border:1px solid var(--bdr);border-radius:8px;padding:6px 14px;color:var(--mut);cursor:pointer;font-size:12px;font-family:'DM Sans',sans-serif;display:flex;align-items:center;gap:6px;transition:all .18s}
+.pchip:hover{color:var(--txt);border-color:var(--mut)}
+@media(max-width:600px){
+  .hinner{padding:0 14px}
+  .inner,.inner-sm{padding:24px 14px}
+  .notes-grid{grid-template-columns:1fr}
+  .filter-bar{gap:8px}
+}
+</style>
+</head>
+<body>
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display:none">
+  <symbol id="I-book"   viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></symbol>
+  <symbol id="I-up"     viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></symbol>
+  <symbol id="I-search" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></symbol>
+  <symbol id="I-eye"    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></symbol>
+  <symbol id="I-trash"  viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6M9 6V4h6v2"/></symbol>
+  <symbol id="I-star"   viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></symbol>
+  <symbol id="I-x"      viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></symbol>
+  <symbol id="I-ok"     viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></symbol>
+  <symbol id="I-plus"   viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></symbol>
+  <symbol id="I-back"   viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></symbol>
+  <symbol id="I-grad"   viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></symbol>
+  <symbol id="I-file"   viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><polyline points="13 2 13 9 20 9"/></symbol>
+  <symbol id="I-copy"   viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></symbol>
+  <symbol id="I-warn"   viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></symbol>
+  <symbol id="I-ref"    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></symbol>
+  <symbol id="I-zip"    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></symbol>
+</svg>
+
+<!-- owner first-run banner -->
+<div id="ob">
+  ⚡ <strong>Owner one-time step:</strong> Open this HTML file, find <code>BLOB_ID = null</code> and change it to <code>BLOB_ID = '<span id="ob-id">…</span>'</code> — then save &amp; re-upload. Regular users never see this message.
+  <button onclick="navigator.clipboard.writeText(document.getElementById('ob-id').textContent)" style="margin-left:8px;background:rgba(244,162,97,.2);border:1px solid rgba(244,162,97,.4);color:var(--acc);border-radius:5px;padding:2px 8px;cursor:pointer;font-size:12px">Copy ID</button>
+</div>
+
+<div id="app">
+<header>
+  <div class="hinner">
+    <button class="logo" onclick="goPage('browse')">
+      <div class="logo-icon"><svg width="16" height="16" style="color:#0d0c1d"><use href="#I-book"/></svg></div>
+      <span class="logo-text">Sab Notes</span>
+    </button>
+    <div class="nav-r">
+      <button class="pchip" id="pchip" onclick="openProfile()" style="display:none">
+        <svg width="12" height="12"><use href="#I-grad"/></svg>
+        <span id="pchip-lbl">Profile</span>
+      </button>
+      <button class="btn btn-ghost btn-sm" id="ref-btn" onclick="loadNotes(true)" title="Refresh">
+        <svg width="13" height="13" id="ref-ico"><use href="#I-ref"/></svg>
+      </button>
+      <button class="btn btn-acc btn-sm" onclick="goPage('upload')">
+        <svg width="14" height="14"><use href="#I-plus"/></svg>Upload
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- ══════════ BROWSE ══════════ -->
+<div id="page-browse" class="page">
+  <div class="inner">
+    <div style="margin-bottom:28px">
+      <h1 id="br-title" style="font-size:38px;margin-bottom:6px">All Study Notes</h1>
+      <p id="br-sub" style="color:var(--mut);font-size:15px">Loading notes…</p>
+    </div>
+
+    <div class="filter-bar">
+      <div class="sw">
+        <svg width="14" height="14" style="position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--mut);pointer-events:none"><use href="#I-search"/></svg>
+        <input id="fs" placeholder="Search notes or subjects…" oninput="renderGrid()" style="background:var(--surf)"/>
+      </div>
+      <select id="ff" onchange="renderGrid()" style="flex:0 1 auto;min-width:150px;background:var(--surf)">
+        <option value="">All Faculties</option>
+      </select>
+      <select id="fy" onchange="renderGrid()" style="flex:0 1 auto;min-width:120px;background:var(--surf)">
+        <option value="">All Years</option>
+        <option>1st Year</option><option>2nd Year</option><option>3rd Year</option><option>4th Year</option><option>5th Year</option>
+      </select>
+      <select id="fm" onchange="renderGrid()" style="flex:0 1 auto;min-width:130px;background:var(--surf)">
+        <option value="">All Semesters</option>
+        <option>1st Part</option><option>2nd Part</option>
+      </select>
+      <button class="btn btn-ghost btn-sm" id="clr-btn" onclick="clearF()" style="display:none">
+        <svg width="12" height="12"><use href="#I-x"/></svg>Clear
+      </button>
+    </div>
+    <div id="pills" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px"></div>
+    <div id="grid" class="notes-grid"></div>
+  </div>
+</div>
+
+<!-- ══════════ UPLOAD ══════════ -->
+<div id="page-upload" class="page">
+  <div class="inner-sm">
+    <button class="btn btn-ghost btn-sm" onclick="goPage('browse')" style="margin-bottom:28px">
+      <svg width="13" height="13"><use href="#I-back"/></svg>Back
+    </button>
+    <h1 style="font-size:36px;margin-bottom:6px">Upload a Note</h1>
+    <p style="color:var(--mut);margin-bottom:32px;font-size:15px">Share your PDFs with fellow students · Max 25 MB</p>
+
+    <div class="dropzone" id="dz"
+      onclick="document.getElementById('fi').click()"
+      ondragover="event.preventDefault();this.classList.add('drag')"
+      ondragleave="this.classList.remove('drag')"
+      ondrop="onDrop(event)" style="margin-bottom:28px">
+      <input type="file" id="fi" accept=".pdf,application/pdf" style="display:none" onchange="onFile(this.files[0])"/>
+      <div id="dz-idle">
+        <div style="width:52px;height:52px;background:rgba(244,162,97,.1);border:1px solid rgba(244,162,97,.2);border-radius:12px;display:flex;align-items:center;justify-content:center;margin:0 auto 14px">
+          <svg width="24" height="24" style="color:var(--acc)"><use href="#I-up"/></svg>
+        </div>
+        <p style="color:var(--txt);font-weight:500;margin-bottom:4px;font-size:15px">Drop your PDF here, or click to browse</p>
+        <p style="color:var(--mut);font-size:13px">PDF only · Maximum 25 MB</p>
+      </div>
+      <div id="dz-ok" style="display:none">
+        <div style="width:52px;height:52px;background:rgba(82,183,136,.12);border:1px solid rgba(82,183,136,.25);border-radius:12px;display:flex;align-items:center;justify-content:center;margin:0 auto 14px">
+          <svg width="26" height="26" style="color:var(--grn)"><use href="#I-ok"/></svg>
+        </div>
+        <p id="dz-name" style="color:var(--txt);font-weight:500;margin-bottom:4px;font-size:15px"></p>
+        <p id="dz-sz" style="color:var(--mut);font-size:13px"></p>
+      </div>
+    </div>
+
+    <div style="display:grid;gap:16px">
+      <div>
+        <label class="label">Note Title *</label>
+        <input id="u-title" placeholder="e.g. Structural Analysis Chapter 1-4"/>
+      </div>
+      <div>
+        <label class="label">Subject / Topic *</label>
+        <input id="u-sub" placeholder="e.g. Structural Analysis"/>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+        <div>
+          <label class="label">Faculty / Program *</label>
+          <select id="u-fac">
+            <option value="">Select program</option>
+            <option>Architecture</option><option>Civil Engineering</option>
+            <option>Computer Engineering</option><option>Electrical Engineering</option>
+            <option>Mechanical Engineering</option><option>BBS / BBA</option>
+            <option>Science (BSc)</option><option>Humanities (BA)</option>
+            <option>Education (BEd)</option><option>Law (LLB)</option>
+            <option>Pharmacy</option><option>IT / Computing</option><option>Other</option>
+          </select>
+        </div>
+        <div>
+          <label class="label">College / School</label>
+          <input id="u-col" placeholder="e.g. IOE Pulchowk, KU"/>
+        </div>
+        <div>
+          <label class="label">Year *</label>
+          <select id="u-yr">
+            <option value="">Select year</option>
+            <option>1st Year</option><option>2nd Year</option><option>3rd Year</option><option>4th Year</option><option>5th Year</option>
+          </select>
+        </div>
+        <div>
+          <label class="label">Semester / Part *</label>
+          <select id="u-sem">
+            <option value="">Select part</option>
+            <option>1st Part</option><option>2nd Part</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- progress -->
+    <div id="up-prog" style="display:none;margin-top:24px">
+      <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px">
+        <span id="up-lbl" style="color:var(--mut)"></span>
+        <span id="up-pct" style="color:var(--acc)"></span>
+      </div>
+      <div class="prog-bar"><div class="prog-fill" id="pf" style="width:0%"></div></div>
+    </div>
+    <div id="up-err" style="display:none;margin-top:18px"></div>
+
+    <div style="display:flex;gap:12px;margin-top:28px">
+      <button class="btn btn-ghost" id="can-btn" onclick="goPage('browse')">Cancel</button>
+      <button class="btn btn-acc" id="sub-btn" onclick="doUpload()" style="flex:1;justify-content:center">
+        <svg width="14" height="14"><use href="#I-up"/></svg>Upload Note
+      </button>
+    </div>
+  </div>
+</div>
+</div><!-- #app -->
+
+
+<!-- ══════════ PROFILE MODAL ══════════ -->
+<div class="overlay" id="m-profile" style="display:none">
+  <div class="modal fade-up" style="max-width:420px;padding:36px 32px">
+    <button id="m-pclose" onclick="closeProfile()" style="position:absolute;top:16px;right:16px;background:none;border:none;cursor:pointer;color:var(--mut);display:none">
+      <svg width="18" height="18"><use href="#I-x"/></svg>
+    </button>
+    <div id="m-pbar" style="display:flex;gap:5px;margin-bottom:28px"></div>
+    <span id="m-psteplbl" style="font-size:11px;color:var(--acc);font-weight:600;letter-spacing:.1em;text-transform:uppercase"></span>
+    <h2 id="m-ptitle" style="font-size:26px;margin:6px 0 24px;line-height:1.2"></h2>
+    <div id="m-pbody"></div>
+    <div style="display:flex;gap:10px;margin-top:24px">
+      <button class="btn btn-ghost" id="m-pback" onclick="pBack()" style="display:none">← Back</button>
+      <button class="btn btn-acc" id="m-pnext" onclick="pNext()" style="flex:1">Next →</button>
+    </div>
+    <p id="m-pfooter" style="margin-top:16px;font-size:12px;color:var(--mut);text-align:center;line-height:1.7">This lets us filter notes to your stream. Change it anytime.</p>
+  </div>
+</div>
+
+<!-- ══════════ PREVIEW MODAL ══════════ -->
+<div class="overlay" id="m-prev" style="display:none" onclick="if(event.target===this)closePrev()">
+  <div class="modal" style="max-width:980px;height:90vh;display:flex;flex-direction:column;overflow:hidden">
+    <div style="padding:14px 20px;border-bottom:1px solid var(--bdr);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;background:var(--card)">
+      <div style="min-width:0;flex:1">
+        <h3 id="pv-title" style="font-size:18px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-family:'Crimson Pro',serif"></h3>
+        <p id="pv-meta" style="color:var(--mut);font-size:12px;margin-top:2px"></p>
+      </div>
+      <div style="display:flex;gap:8px;margin-left:16px;flex-shrink:0">
+        <button class="btn btn-ghost btn-sm" onclick="openSum()"><svg width="12" height="12"><use href="#I-star"/></svg>AI Summary</button>
+        <button onclick="closePrev()" style="background:none;border:none;cursor:pointer;color:var(--mut);padding:6px;display:flex;align-items:center"><svg width="20" height="20"><use href="#I-x"/></svg></button>
+      </div>
+    </div>
+    <div style="flex:1;overflow:hidden;background:#08080f;position:relative">
+      <div id="pv-load" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;gap:12px;color:var(--mut);font-size:15px">
+        <span class="spin">⟳</span> Fetching PDF…
+      </div>
+      <iframe id="pv-frame" style="width:100%;height:100%;border:none;display:none" title="PDF Preview"></iframe>
+      <div id="pv-err" style="position:absolute;inset:0;display:none;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:40px;gap:12px;color:var(--mut)">
+        <svg width="36" height="36" style="opacity:.4"><use href="#I-warn"/></svg>
+        <p id="pv-emsg" style="font-size:14px;max-width:400px;line-height:1.6"></p>
+        <a id="pv-direct" href="#" target="_blank" class="btn btn-ghost btn-sm" style="display:none">Open PDF directly</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ SUMMARIZE MODAL ══════════ -->
+<div class="overlay" id="m-sum" style="display:none" onclick="if(event.target===this)closeSum()">
+  <div class="modal fade-up" style="max-width:540px;padding:32px">
+    <button onclick="closeSum()" style="position:absolute;top:16px;right:16px;background:none;border:none;cursor:pointer;color:var(--mut)"><svg width="18" height="18"><use href="#I-x"/></svg></button>
+    <div id="sum-choose">
+      <div style="display:flex;gap:14px;align-items:flex-start;margin-bottom:24px">
+        <div style="width:42px;height:42px;background:rgba(244,162,97,.14);border:1px solid rgba(244,162,97,.28);border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+          <svg width="18" height="18" style="color:var(--acc)"><use href="#I-star"/></svg>
+        </div>
+        <div><h2 style="font-size:22px;margin-bottom:3px">Summarize with AI</h2>
+          <p id="sum-notename" style="color:var(--mut);font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:320px"></p>
+        </div>
+      </div>
+      <div id="sum-err" style="display:none;margin-bottom:16px"></div>
+      <button class="btn btn-acc" onclick="runClaude()" style="width:100%;padding:14px;font-size:15px;margin-bottom:10px;justify-content:center">
+        <svg width="15" height="15"><use href="#I-star"/></svg>Summarize with Claude (in-app)
+      </button>
+      <p style="color:var(--mut);font-size:12px;text-align:center;margin-bottom:22px;line-height:1.6">Claude reads the PDF directly — no copy-paste needed.</p>
+      <hr style="border:none;border-top:1px solid var(--bdr);margin:0 0 18px"/>
+      <p style="color:var(--mut);font-size:12px;text-align:center;margin-bottom:12px">Or open another AI — upload the PDF there manually</p>
+      <div style="display:flex;gap:10px">
+        <a href="https://chatgpt.com" target="_blank" rel="noopener" style="flex:1;padding:12px 8px;background:var(--surf);border:1px solid var(--bdr);border-radius:10px;text-align:center;text-decoration:none;transition:border-color .2s" onmouseover="this.style.borderColor='var(--acc)'" onmouseout="this.style.borderColor='var(--bdr)'">
+          <div style="font-size:13px;font-weight:500;color:var(--txt);margin-bottom:2px">ChatGPT</div><div style="font-size:11px;color:var(--mut)">OpenAI</div>
+        </a>
+        <a href="https://gemini.google.com" target="_blank" rel="noopener" style="flex:1;padding:12px 8px;background:var(--surf);border:1px solid var(--bdr);border-radius:10px;text-align:center;text-decoration:none;transition:border-color .2s" onmouseover="this.style.borderColor='var(--acc)'" onmouseout="this.style.borderColor='var(--bdr)'">
+          <div style="font-size:13px;font-weight:500;color:var(--txt);margin-bottom:2px">Gemini</div><div style="font-size:11px;color:var(--mut)">Google</div>
+        </a>
+        <a href="https://perplexity.ai" target="_blank" rel="noopener" style="flex:1;padding:12px 8px;background:var(--surf);border:1px solid var(--bdr);border-radius:10px;text-align:center;text-decoration:none;transition:border-color .2s" onmouseover="this.style.borderColor='var(--acc)'" onmouseout="this.style.borderColor='var(--bdr)'">
+          <div style="font-size:13px;font-weight:500;color:var(--txt);margin-bottom:2px">Perplexity</div><div style="font-size:11px;color:var(--mut)">Research</div>
+        </a>
+      </div>
+    </div>
+    <div id="sum-loading" style="display:none;text-align:center;padding:48px 0">
+      <div style="width:52px;height:52px;background:rgba(244,162,97,.14);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 18px">
+        <span class="spin" style="font-size:24px;color:var(--acc)">⟳</span>
+      </div>
+      <h3 style="margin-bottom:8px;font-size:20px">Generating…</h3>
+      <p style="color:var(--mut);font-size:14px">Claude is reading your PDF</p>
+    </div>
+    <div id="sum-result" style="display:none">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px">
+        <h2 style="font-size:22px">Summary</h2>
+        <button class="btn btn-ghost btn-sm" onclick="showSumChoose()">Try again</button>
+      </div>
+      <div id="sum-txt" class="scrolly" style="background:var(--surf);border:1px solid var(--bdr);border-radius:12px;padding:20px;max-height:380px;font-size:14px;line-height:1.8;white-space:pre-wrap;color:var(--txt)"></div>
+      <button class="btn btn-ghost" id="copy-btn" onclick="copySummary()" style="width:100%;margin-top:14px;justify-content:center">
+        <svg width="13" height="13"><use href="#I-copy"/></svg>Copy Summary
+      </button>
+    </div>
+  </div>
+</div>
+
+
+<script>
+/* ══════════════════════════════════════════════════════════
+   ██████████  CONFIGURATION  ██████████
+   ══════════════════════════════════════════════════════════
+
+   WEBHOOK_UPLOADS  → your #all-uploads Discord channel webhook
+                      posts compact: Subject | Faculty | Note ID
+
+   FACULTY_WEBHOOKS → map of faculty name → webhook URL for that
+                      faculty's channel (full detailed embed)
+                      Leave empty {} if you haven't set those up yet.
+                      Example:
+                        'Architecture': 'https://discord.com/api/webhooks/...',
+                        'Civil Engineering': 'https://discord.com/api/webhooks/...',
+
+   BLOB_ID          → shared notes database (jsonblob.com, free).
+                      null  = auto-creates on first load, shows owner banner.
+                      'xxx' = all users share this DB. Set this after first run.
+   ══════════════════════════════════════════════════════════ */
+
+const WEBHOOK_UPLOADS = 'https://discord.com/api/webhooks/1491774008184537108/9CGbkKA88b8tG61tQOMC2V1s0T_Cqbn6hzeGzO9IihvF_LWAnqRK5M6byoLPLHto7XPX';
+
+const FACULTY_WEBHOOKS = {
+  // Add faculty-specific webhook URLs here once you create those channels:
+  // 'Architecture':          'https://discord.com/api/webhooks/...',
+  // 'Civil Engineering':     'https://discord.com/api/webhooks/...',
+  // 'Computer Engineering':  'https://discord.com/api/webhooks/...',
+};
+
+const BLOB_ID = null; // ← OWNER: replace null with your blob ID after first run
+
+/* ── internals ── */
+const BLOB_API  = 'https://jsonblob.com/api/jsonBlob';
+const MAX_BYTES = 25 * 1024 * 1024; // 25 MB — Discord's actual free-server limit
+
+const FACULTIES = [
+  'Architecture','Civil Engineering','Computer Engineering','Electrical Engineering',
+  'Mechanical Engineering','BBS / BBA','Science (BSc)','Humanities (BA)',
+  'Education (BEd)','Law (LLB)','Pharmacy','IT / Computing','Other'
+];
+
+let notes = [], profile = JSON.parse(localStorage.getItem('sn_profile')||'null');
+let selFile = null, activeNote = null, _blobUrl = null;
+
+const $ = id => document.getElementById(id);
+const uid  = () => Date.now().toString(36)+Math.random().toString(36).slice(2);
+const fmtB = b => b < 1048576 ? (b/1024).toFixed(1)+' KB' : (b/1048576).toFixed(2)+' MB';
+const fmtD = d => new Date(d).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+
+/* ════════════════════════════════════════
+   SHARED DATABASE  (jsonblob.com)
+   ════════════════════════════════════════ */
+const getBlobId = () => BLOB_ID || localStorage.getItem('sn_blob') || null;
+
+async function dbRead(){
+  const id = getBlobId(); if(!id) return [];
+  try {
+    const r = await fetch(`${BLOB_API}/${id}`,{headers:{Accept:'application/json'}});
+    return r.ok ? r.json() : null;
+  } catch { return null; }
+}
+
+async function dbWrite(arr){
+  const id = getBlobId(); if(!id) return;
+  try {
+    await fetch(`${BLOB_API}/${id}`,{
+      method:'PUT', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify(arr)
+    });
+  } catch{}
+}
+
+async function dbCreate(){
+  const r = await fetch(BLOB_API,{
+    method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify([])
+  });
+  if(!r.ok) throw new Error('Could not create shared storage');
+  const loc = r.headers.get('Location')||'';
+  return loc.split('/').pop();
+}
+
+/* ════════════════════════════════════════
+   BOOT
+   ════════════════════════════════════════ */
+(async function boot(){
+  // populate faculty dropdown
+  const sel = $('ff');
+  FACULTIES.forEach(f=>{ const o=document.createElement('option'); o.value=o.textContent=f; sel.appendChild(o); });
+
+  if(profile){ updateChip(); applyPF(); }
+  else openProfile();
+
+  goPage('browse');
+  await loadNotes(false);
+})();
+
+async function loadNotes(spin){
+  if(spin){ $('ref-ico').innerHTML='<animateTransform/>'; $('ref-btn').innerHTML='<span class="spin" style="font-size:13px;color:var(--mut)">⟳</span>'; }
+
+  showSkels();
+
+  let id = getBlobId();
+  if(!id){
+    // First ever load — create shared storage
+    try {
+      id = await dbCreate();
+      localStorage.setItem('sn_blob', id);
+      $('ob-id').textContent = id;
+      $('ob').style.display = 'block';
+    } catch(e){
+      $('br-sub').textContent = 'Could not create shared storage. Check internet connection.';
+      renderGrid(); return;
+    }
+  }
+
+  const data = await dbRead();
+  if(data === null){
+    $('br-sub').innerHTML = '<span style="color:var(--red)">Could not load notes — shared storage unreachable. Try refreshing.</span>';
+  } else {
+    notes = data;
+  }
+  renderGrid();
+  if(spin) setTimeout(()=>{ $('ref-btn').innerHTML='<svg width="13" height="13" id="ref-ico"><use href="#I-ref"/></svg>'; }, 400);
+}
+
+function showSkels(){
+  const g=$('grid'); g.innerHTML='';
+  for(let i=0;i<6;i++) g.innerHTML+=`<div class="skel"><div style="display:flex;gap:12px;margin-bottom:16px"><div style="width:46px;height:54px;background:var(--bdr);border-radius:9px;flex-shrink:0"></div><div style="flex:1"><div class="sl" style="width:65%"></div><div class="sl" style="width:40%"></div></div></div><div style="display:flex;gap:6px;margin-bottom:16px"><div class="sl" style="width:60px;height:22px;border-radius:20px;margin:0"></div><div class="sl" style="width:55px;height:22px;border-radius:20px;margin:0"></div></div><div style="border-top:1px solid var(--bdr);padding-top:14px;display:flex;justify-content:space-between"><div class="sl" style="width:90px;height:10px;margin:0"></div><div class="sl" style="width:80px;height:28px;border-radius:8px;margin:0"></div></div></div>`;
+}
+
+/* ════════════════════════════════════════
+   ROUTING
+   ════════════════════════════════════════ */
+function goPage(name){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  $('page-'+name).classList.add('active');
+  if(name==='browse') renderGrid();
+  if(name==='upload') resetForm();
+  window.scrollTo(0,0);
+}
+
+/* ════════════════════════════════════════
+   PROFILE
+   ════════════════════════════════════════ */
+const PSTEPS = [
+  {q:"What's your program?",     k:'faculty',  t:'sel', opts:FACULTIES,                                        lb:'Faculty'},
+  {q:"What year are you in?",    k:'year',     t:'sel', opts:['1st Year','2nd Year','3rd Year','4th Year','5th Year'], lb:'Year'},
+  {q:"Which part / semester?",   k:'semester', t:'sel', opts:['1st Part','2nd Part'],                           lb:'Semester'},
+  {q:"Your college (optional)",  k:'college',  t:'inp', ph:'e.g. IOE Pulchowk, KU'},
+];
+let ps=0, pd={faculty:'',year:'',semester:'',college:''};
+
+function openProfile(){
+  pd = profile?{...profile}:{faculty:'',year:'',semester:'',college:''};
+  ps=0; $('m-pclose').style.display=profile?'block':'none';
+  $('m-pfooter').style.display=profile?'none':'block';
+  renderPS(); $('m-profile').style.display='flex';
+}
+function closeProfile(){ $('m-profile').style.display='none'; }
+
+function updateChip(){
+  if(!profile) return;
+  $('pchip').style.display='flex';
+  $('pchip-lbl').textContent=profile.faculty.split(' ')[0]+' · '+profile.year;
+}
+function applyPF(){
+  if(!profile) return;
+  $('ff').value=profile.faculty; $('fy').value=profile.year; $('fm').value=profile.semester;
+}
+
+function renderPS(){
+  const s=PSTEPS[ps];
+  const bar=$('m-pbar'); bar.innerHTML='';
+  PSTEPS.forEach((_,i)=>{ const d=document.createElement('div'); d.style.cssText=`flex:1;height:3px;border-radius:3px;background:${i<=ps?'var(--acc)':'var(--bdr)'};transition:background .25s`; bar.appendChild(d); });
+  $('m-psteplbl').textContent=`Step ${ps+1} of ${PSTEPS.length}`;
+  $('m-ptitle').textContent=s.q;
+  $('m-pback').style.display=ps>0?'inline-flex':'none';
+  const b=$('m-pbody'); b.innerHTML='';
+  if(s.t==='sel'){
+    const el=document.createElement('select'); el.id='pf-field';
+    const def=document.createElement('option'); def.value=''; def.textContent='Choose '+s.lb+'…'; el.appendChild(def);
+    s.opts.forEach(o=>{ const op=document.createElement('option'); op.value=op.textContent=o; if(pd[s.k]===o) op.selected=true; el.appendChild(op); });
+    b.appendChild(el);
+  } else {
+    const el=document.createElement('input'); el.id='pf-field'; el.placeholder=s.ph||''; el.value=pd[s.k]||'';
+    el.addEventListener('keydown',e=>{ if(e.key==='Enter') pNext(); });
+    b.appendChild(el);
+  }
+  $('m-pnext').textContent=ps===PSTEPS.length-1?'Save Profile →':'Next →';
+}
+function pNext(){
+  const s=PSTEPS[ps]; const v=document.getElementById('pf-field').value.trim();
+  if(s.t==='sel'&&!v) return;
+  pd[s.k]=v;
+  if(ps<PSTEPS.length-1){ ps++; renderPS(); }
+  else {
+    profile=pd; localStorage.setItem('sn_profile',JSON.stringify(profile));
+    updateChip(); applyPF(); closeProfile(); renderGrid();
+  }
+}
+function pBack(){ if(ps>0){ ps--; renderPS(); } }
+
+/* ════════════════════════════════════════
+   BROWSE / FILTER
+   ════════════════════════════════════════ */
+function clearF(){ $('fs').value=''; $('ff').value=''; $('fy').value=''; $('fm').value=''; renderGrid(); }
+
+function renderGrid(){
+  const q=$('fs').value.toLowerCase().trim();
+  const fac=$('ff').value, yr=$('fy').value, sem=$('fm').value;
+  const hasF=q||fac||yr||sem;
+
+  const list=notes.filter(n=>{
+    if(fac && n.faculty!==fac) return false;
+    if(yr  && n.year!==yr)     return false;
+    if(sem && n.semester!==sem) return false;
+    if(q && !n.title.toLowerCase().includes(q) && !(n.subject||'').toLowerCase().includes(q)) return false;
+    return true;
+  });
+
+  $('br-title').textContent = fac||(profile?.faculty)||'All Study Notes';
+  $('br-sub').innerHTML = `Showing <strong style="color:var(--acc)">${list.length}</strong> of ${notes.length} notes`+(profile?` · ${profile.year} · ${profile.semester}`:'');
+  $('clr-btn').style.display=hasF?'inline-flex':'none';
+
+  const pills=$('pills'); pills.innerHTML='';
+  const mkP=(label,clr)=>{ const s=document.createElement('span'); s.className='pill'; s.innerHTML=`${label}<button onclick="${clr}"><svg width="11" height="11"><use href="#I-x"/></svg></button>`; pills.appendChild(s); };
+  if(fac) mkP(fac,`$('ff').value='';renderGrid()`);
+  if(yr)  mkP(yr, `$('fy').value='';renderGrid()`);
+  if(sem) mkP(sem,`$('fm').value='';renderGrid()`);
+  if(q)   mkP(`"${q}"`,`$('fs').value='';renderGrid()`);
+
+  const g=$('grid'); g.innerHTML='';
+  if(!list.length){
+    g.innerHTML=`<div style="grid-column:1/-1;text-align:center;padding:80px 24px">
+      <div style="width:64px;height:64px;background:rgba(244,162,97,.08);border:1px solid rgba(244,162,97,.15);border-radius:16px;display:flex;align-items:center;justify-content:center;margin:0 auto 20px"><svg width="28" height="28" style="color:var(--acc);opacity:.6"><use href="#I-file"/></svg></div>
+      <h3 style="font-size:22px;margin-bottom:8px">No notes found</h3>
+      <p style="color:var(--mut);font-size:14px;margin-bottom:28px;max-width:340px;margin-left:auto;margin-right:auto">${notes.length===0?'Be the first to share a note with your peers!':'Try adjusting or clearing your filters.'}</p>
+      <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+        ${hasF?`<button class="btn btn-ghost" onclick="clearF()"><svg width="14" height="14"><use href="#I-x"/></svg>Clear Filters</button>`:''}
+        <button class="btn btn-acc" onclick="goPage('upload')"><svg width="14" height="14"><use href="#I-plus"/></svg>Upload a Note</button>
+      </div>
+    </div>`;
+    return;
+  }
+  list.forEach((n,i)=>g.appendChild(mkCard(n,i)));
+}
+
+function mkCard(n,i){
+  const d=document.createElement('div'); d.className='card fade-up'; d.style.animationDelay=`${i*35}ms`;
+  d.innerHTML=`
+    <div style="display:flex;gap:14px;margin-bottom:14px">
+      <div style="width:46px;height:54px;background:rgba(244,162,97,.1);border:1px solid rgba(244,162,97,.18);border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+        <svg width="20" height="20" style="color:var(--acc)"><use href="#I-file"/></svg>
+      </div>
+      <div style="flex:1;min-width:0">
+        <h3 style="font-size:15px;font-weight:600;color:var(--txt);margin-bottom:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-family:'Crimson Pro',serif">${n.title}</h3>
+        <p style="color:var(--mut);font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${n.subject||'—'}</p>
+      </div>
+    </div>
+    <div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:16px">
+      <span class="tag">${n.faculty}</span>
+      <span class="tag">${n.year}</span>
+      <span class="tag">${n.semester}</span>
+      ${n.college?`<span class="tag" style="max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${n.college}</span>`:''}
+    </div>
+    <div style="display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--bdr);padding-top:14px">
+      <span style="color:var(--mut);font-size:11px">${fmtD(n.uploadedAt)} · ${fmtB(n.fileSize)}</span>
+      <div id="ac-${n.id}" style="display:flex;gap:6px">
+        <button class="btn btn-ghost btn-sm" onclick="confirmDel('${n.id}')" title="Delete"><svg width="12" height="12"><use href="#I-trash"/></svg></button>
+        <button class="btn btn-ghost btn-sm" onclick="openSumFor('${n.id}')"><svg width="12" height="12"><use href="#I-star"/></svg>AI</button>
+        <button class="btn btn-acc btn-sm" onclick="openPrev('${n.id}')"><svg width="12" height="12"><use href="#I-eye"/></svg>View</button>
+      </div>
+    </div>`;
+  return d;
+}
+
+function confirmDel(id){
+  const el=$('ac-'+id); if(!el) return;
+  el.innerHTML=`<button class="btn btn-danger btn-sm" onclick="delNote('${id}')">Confirm</button><button class="btn btn-ghost btn-sm" onclick="renderGrid()">Cancel</button>`;
+}
+async function delNote(id){
+  notes=notes.filter(n=>n.id!==id);
+  await dbWrite(notes);
+  renderGrid();
+}
+
+/* ════════════════════════════════════════
+   UPLOAD
+   ════════════════════════════════════════ */
+function resetForm(){
+  selFile=null;
+  $('dz-idle').style.display='block'; $('dz-ok').style.display='none';
+  $('fi').value='';
+  ['u-title','u-sub','u-col'].forEach(id=>$(id).value='');
+  $('u-fac').value=profile?.faculty||'';
+  $('u-yr').value=profile?.year||'';
+  $('u-sem').value=profile?.semester||'';
+  $('up-prog').style.display='none'; $('up-err').style.display='none';
+  $('sub-btn').disabled=false; $('can-btn').disabled=false;
+  $('sub-btn').innerHTML='<svg width="14" height="14"><use href="#I-up"/></svg>Upload Note';
+}
+function onDrop(e){ e.preventDefault(); $('dz').classList.remove('drag'); onFile(e.dataTransfer.files[0]); }
+function onFile(f){
+  if(!f) return;
+  if(f.type!=='application/pdf' && !f.name.toLowerCase().endsWith('.pdf')){ showUE('Only PDF files are accepted.'); return; }
+  selFile=f;
+  $('dz-idle').style.display='none'; $('dz-ok').style.display='block';
+  $('dz-name').textContent=f.name;
+  $('dz-sz').textContent=`${fmtB(f.size)} · Click or drag to change`;
+  $('up-err').style.display='none';
+}
+function setP(pct,lbl,col='var(--acc)'){
+  $('up-prog').style.display='block';
+  $('up-lbl').textContent=lbl; $('up-pct').textContent=pct+'%';
+  $('pf').style.width=pct+'%'; $('pf').style.background=col;
+}
+function showUE(msg){
+  $('up-err').style.display='block';
+  $('up-err').innerHTML=`<div class="err-box"><svg width="15" height="15" style="flex-shrink:0;margin-top:1px"><use href="#I-warn"/></svg><span>${msg}</span></div>`;
+}
+
+/* ── PDF Compression (canvas-based, for files 25-100 MB) ──────────
+   Renders each page at 0.75 scale, 80% JPEG quality, rebuilds PDF.
+   Requires pdf.js (loaded below) and pdf-lib.
+   ──────────────────────────────────────────────────────────────── */
+async function compressPDF(file){
+  // We load pdf.js lazily
+  if(!window.pdfjsLib){
+    await new Promise((res,rej)=>{
+      const s=document.createElement('script');
+      s.src='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';
+      s.onload=res; s.onerror=rej; document.head.appendChild(s);
+    });
+    window.pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+  }
+  if(!window.PDFLib){
+    await new Promise((res,rej)=>{
+      const s=document.createElement('script');
+      s.src='https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js';
+      s.onload=res; s.onerror=rej; document.head.appendChild(s);
+    });
+  }
+
+  const buf = await file.arrayBuffer();
+  const srcPdf = await pdfjsLib.getDocument({data:buf}).promise;
+  const newPdf = await PDFLib.PDFDocument.create();
+  const SCALE  = 0.72; // reduce dimensions ~28%
+  const QUALITY = 0.78; // JPEG quality
+
+  for(let i=1; i<=srcPdf.numPages; i++){
+    setP(20+Math.round((i/srcPdf.numPages)*55), `Compressing page ${i}/${srcPdf.numPages}…`);
+    const page = await srcPdf.getPage(i);
+    const vp   = page.getViewport({scale: SCALE});
+    const canvas = document.createElement('canvas');
+    canvas.width=vp.width; canvas.height=vp.height;
+    const ctx=canvas.getContext('2d');
+    await page.render({canvasContext:ctx,viewport:vp}).promise;
+    const jpeg = canvas.toDataURL('image/jpeg', QUALITY);
+    const imgBytes = Uint8Array.from(atob(jpeg.split(',')[1]), c=>c.charCodeAt(0));
+    const embImg = await newPdf.embedJpg(imgBytes);
+    const p = newPdf.addPage([vp.width, vp.height]);
+    p.drawImage(embImg,{x:0,y:0,width:vp.width,height:vp.height});
+  }
+
+  const bytes = await newPdf.save();
+  return new File([bytes], file.name, {type:'application/pdf'});
+}
+
+async function doUpload(){
+  if(!selFile)                 { showUE('Please select a PDF file.'); return; }
+  if(!$('u-title').value.trim()){ showUE('Please enter a note title.'); return; }
+  if(!$('u-sub').value.trim()) { showUE('Please enter a subject / topic.'); return; }
+  if(!$('u-fac').value)        { showUE('Please select a faculty / program.'); return; }
+  if(!$('u-yr').value)         { showUE('Please select a year.'); return; }
+  if(!$('u-sem').value)        { showUE('Please select a semester / part.'); return; }
+
+  $('up-err').style.display='none';
+  $('sub-btn').disabled=true; $('can-btn').disabled=true;
+  $('sub-btn').innerHTML='<span class="spin">⟳</span> Working…';
+
+  let fileToSend = selFile;
+
+  /* ── size check & compression ── */
+  if(selFile.size > MAX_BYTES){
+    // Over 25 MB → try canvas compression
+    if(selFile.size > 100*1024*1024){
+      $('sub-btn').disabled=false; $('can-btn').disabled=false;
+      $('sub-btn').innerHTML='<svg width="14" height="14"><use href="#I-up"/></svg>Upload Note';
+      showUE(`This PDF is ${fmtB(selFile.size)} — too large to compress in-browser (limit: 100 MB). Please compress it first at <a href="https://smallpdf.com/compress-pdf" target="_blank" style="color:var(--acc)">Smallpdf</a> or <a href="https://www.ilovepdf.com/compress_pdf" target="_blank" style="color:var(--acc)">ilovepdf</a>, then re-upload.`);
+      return;
+    }
+    setP(10,'Compressing PDF — this may take a moment…');
+    try {
+      fileToSend = await compressPDF(selFile);
+      if(fileToSend.size > MAX_BYTES){
+        $('sub-btn').disabled=false; $('can-btn').disabled=false;
+        $('sub-btn').innerHTML='<svg width="14" height="14"><use href="#I-up"/></svg>Upload Note';
+        showUE(`Even after compression the file is ${fmtB(fileToSend.size)} — still over 25 MB. Please use <a href="https://smallpdf.com/compress-pdf" target="_blank" style="color:var(--acc)">Smallpdf</a> to reduce it further.`);
+        return;
+      }
+    } catch(e){
+      $('sub-btn').disabled=false; $('can-btn').disabled=false;
+      $('sub-btn').innerHTML='<svg width="14" height="14"><use href="#I-up"/></svg>Upload Note';
+      showUE('Compression failed: '+e.message+'. Try compressing manually at Smallpdf.');
+      return;
+    }
+  }
+
+  const note = {
+    id: uid(),
+    title:    $('u-title').value.trim(),
+    subject:  $('u-sub').value.trim(),
+    faculty:  $('u-fac').value,
+    year:     $('u-yr').value,
+    semester: $('u-sem').value,
+    college:  $('u-col').value.trim(),
+    fileName: fileToSend.name,
+    fileSize: selFile.size,        // show original size
+    compressedSize: fileToSend.size,
+    uploadedAt: new Date().toISOString(),
+    cdnUrl: null
+  };
+
+  setP(78,'Sending to Discord…');
+
+  try {
+    /* ── POST to #all-uploads: compact message ── */
+    const compactMsg = {
+      content: `📄 **${note.subject}** · ${note.faculty}\n🆔 \`${note.id}\``
+    };
+    const fd1 = new FormData();
+    fd1.append('payload_json', JSON.stringify(compactMsg));
+    fd1.append('file', fileToSend, note.fileName);
+    // ?wait=true → Discord returns message JSON with attachment URL
+    const r1 = await fetch(WEBHOOK_UPLOADS+'?wait=true', {method:'POST', body:fd1});
+    if(!r1.ok){ const t=await r1.text(); throw new Error(`Discord error ${r1.status}: ${t.slice(0,120)}`); }
+    const msg1 = await r1.json();
+    const cdnUrl = msg1?.attachments?.[0]?.url;
+    if(!cdnUrl) throw new Error('Discord did not return a file URL. Check the webhook is valid and the file is under 25 MB.');
+    note.cdnUrl = cdnUrl;
+
+    /* ── POST to faculty-specific channel (if webhook exists): full details ── */
+    const facWebhook = FACULTY_WEBHOOKS[note.faculty];
+    if(facWebhook){
+      const detailEmbed = {
+        title: `📄 ${note.title}`,
+        color: 0xf4a261,
+        fields:[
+          {name:'📚 Subject',  value:note.subject,         inline:true},
+          {name:'🏛️ Faculty', value:note.faculty,          inline:true},
+          {name:'📅 Year',     value:note.year,             inline:true},
+          {name:'🗓️ Semester',value:note.semester,         inline:true},
+          {name:'🏫 College',  value:note.college||'—',     inline:true},
+          {name:'📦 Size',     value:fmtB(note.fileSize),   inline:true},
+          {name:'🔗 View PDF', value:`[Open PDF](${cdnUrl})`,inline:false},
+          {name:'🆔 Note ID',  value:'`'+note.id+'`',      inline:false},
+        ],
+        timestamp: note.uploadedAt,
+        footer: {text:'Sab Notes'}
+      };
+      const fd2 = new FormData();
+      fd2.append('payload_json', JSON.stringify({embeds:[detailEmbed]}));
+      await fetch(facWebhook, {method:'POST', body:fd2}).catch(()=>{});
+    }
+
+    /* ── save to shared database ── */
+    setP(92,'Saving to shared database…');
+    const latest = await dbRead() || [];
+    latest.unshift(note);
+    notes = latest;
+    await dbWrite(notes);
+
+    setP(100,'Done!','var(--grn)');
+    $('sub-btn').innerHTML='<svg width="14" height="14"><use href="#I-ok"/></svg> Uploaded!';
+    setTimeout(()=>goPage('browse'), 1300);
+
+  } catch(e){
+    $('sub-btn').disabled=false; $('can-btn').disabled=false;
+    $('sub-btn').innerHTML='<svg width="14" height="14"><use href="#I-up"/></svg>Retry';
+    $('up-prog').style.display='none';
+    showUE(e.message || 'Upload failed — please try again.');
+  }
+}
+
+/* ════════════════════════════════════════
+   PREVIEW  — fetch as blob to bypass
+   Discord CDN's X-Frame-Options header
+   ════════════════════════════════════════ */
+function openPrev(id){
+  activeNote = notes.find(n=>n.id===id); if(!activeNote) return;
+  $('pv-title').textContent = activeNote.title;
+  $('pv-meta').textContent  = `${activeNote.faculty} · ${activeNote.year} · ${activeNote.semester}${activeNote.college?' · '+activeNote.college:''}`;
+  $('pv-load').style.display='flex';
+  $('pv-frame').style.display='none';
+  $('pv-err').style.display='none';
+  $('m-prev').style.display='flex';
+
+  if(_blobUrl){ URL.revokeObjectURL(_blobUrl); _blobUrl=null; }
+
+  if(!activeNote.cdnUrl){
+    showPE('No file URL stored for this note. Delete it and re-upload.'); return;
+  }
+
+  // Fetch PDF → blob → local blob:// URL → iframe (no X-Frame-Options restriction)
+  fetch(activeNote.cdnUrl)
+    .then(r=>{ if(!r.ok) throw new Error(`HTTP ${r.status} from Discord CDN`); return r.blob(); })
+    .then(blob=>{
+      if(!blob.size) throw new Error('Empty response from Discord — CDN link may have expired.');
+      _blobUrl = URL.createObjectURL(blob);
+      const fr=$('pv-frame');
+      fr.onload=()=>{ $('pv-load').style.display='none'; fr.style.display='block'; };
+      fr.src=_blobUrl;
+    })
+    .catch(e=>{
+      showPE(`Could not load PDF: ${e.message}. The Discord CDN link may have expired — re-upload the note to get a fresh link.`, activeNote.cdnUrl);
+    });
+}
+function showPE(msg, directUrl){
+  $('pv-load').style.display='none';
+  const el=$('pv-err'); el.style.display='flex';
+  $('pv-emsg').textContent=msg;
+  const link=$('pv-direct');
+  if(directUrl){ link.href=directUrl; link.style.display='inline-flex'; }
+  else link.style.display='none';
+}
+function closePrev(){
+  $('m-prev').style.display='none';
+  $('pv-frame').src='about:blank';
+  if(_blobUrl){ URL.revokeObjectURL(_blobUrl); _blobUrl=null; }
+}
+
+/* ════════════════════════════════════════
+   SUMMARIZE
+   ════════════════════════════════════════ */
+function openSum(){ closePrev(); if(activeNote) openSumFor(activeNote.id); }
+function closeSum(){ $('m-sum').style.display='none'; }
+function showSumChoose(){ $('sum-choose').style.display='block'; $('sum-loading').style.display='none'; $('sum-result').style.display='none'; }
+function openSumFor(id){
+  activeNote=notes.find(n=>n.id===id); if(!activeNote) return;
+  $('sum-notename').textContent=activeNote.title;
+  $('sum-err').style.display='none';
+  showSumChoose(); $('m-sum').style.display='flex';
+}
+
+async function runClaude(){
+  if(!activeNote?.cdnUrl){
+    $('sum-err').style.display='block';
+    $('sum-err').innerHTML=`<div class="err-box"><svg width="14" height="14"><use href="#I-warn"/></svg>No file URL — re-upload the note first.</div>`;
+    return;
+  }
+  $('sum-choose').style.display='none'; $('sum-loading').style.display='block';
+  try {
+    const r=await fetch(activeNote.cdnUrl);
+    if(!r.ok) throw new Error(`Could not fetch PDF (HTTP ${r.status}). CDN link may be expired.`);
+    const buf=await r.arrayBuffer();
+    const bytes=new Uint8Array(buf); let bin='';
+    for(let i=0;i<bytes.length;i++) bin+=String.fromCharCode(bytes[i]);
+    const b64=btoa(bin);
+    const res=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-20250514', max_tokens:1000,
+        messages:[{role:'user',content:[
+          {type:'document',source:{type:'base64',media_type:'application/pdf',data:b64}},
+          {type:'text',text:'Give a clear, well-structured summary of this study note. Include key topics, concepts, definitions, formulas, and revision points. Format it as a helpful review guide for a student studying for exams.'}
+        ]}]
+      })
+    });
+    const data=await res.json();
+    if(data.error) throw new Error(data.error.message);
+    $('sum-txt').textContent=data.content.map(c=>c.text||'').join('\n').trim();
+    $('sum-loading').style.display='none'; $('sum-result').style.display='block';
+  } catch(e){
+    $('sum-loading').style.display='none'; $('sum-choose').style.display='block';
+    $('sum-err').style.display='block';
+    $('sum-err').innerHTML=`<div class="err-box"><svg width="14" height="14"><use href="#I-warn"/></svg>${e.message}</div>`;
+  }
+}
+
+function copySummary(){
+  navigator.clipboard.writeText($('sum-txt').textContent).catch(()=>{});
+  $('copy-btn').innerHTML='<svg width="13" height="13"><use href="#I-ok"/></svg>Copied!';
+  setTimeout(()=>{ $('copy-btn').innerHTML='<svg width="13" height="13"><use href="#I-copy"/></svg>Copy Summary'; },2200);
+}
+</script>
+</body>
+</html>
