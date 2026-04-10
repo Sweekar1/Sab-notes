@@ -180,7 +180,7 @@ header{position:sticky;top:0;z-index:100;background:rgba(13,12,29,.92);border-bo
           <svg width="26" height="26" style="color:var(--grn)"><use href="#I-ok"/></svg>
         </div>
         <p id="dz-name" style="color:var(--txt);font-weight:500;margin-bottom:4px;font-size:15px"></p>
-        <p id="dz-sz" style="color:var(--mut);font-size:13px"></p>
+        <p id="dz-sz"   style="color:var(--mut);font-size:13px"></p>
       </div>
     </div>
 
@@ -235,7 +235,7 @@ header{position:sticky;top:0;z-index:100;background:rgba(13,12,29,.92);border-bo
     </div>
   </div>
 </div>
-</div>
+</div><!-- #app -->
 
 <!-- PROFILE MODAL -->
 <div class="overlay" id="m-profile" style="display:none">
@@ -261,11 +261,15 @@ header{position:sticky;top:0;z-index:100;background:rgba(13,12,29,.92);border-bo
     <div style="padding:14px 20px;border-bottom:1px solid var(--bdr);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;background:var(--card)">
       <div style="min-width:0;flex:1">
         <h3 id="pv-title" style="font-size:18px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-family:'Crimson Pro',serif"></h3>
-        <p id="pv-meta" style="color:var(--mut);font-size:12px;margin-top:2px"></p>
+        <p id="pv-meta"  style="color:var(--mut);font-size:12px;margin-top:2px"></p>
       </div>
       <div style="display:flex;gap:8px;margin-left:16px;flex-shrink:0">
-        <button class="btn btn-ghost btn-sm" onclick="openSumFor(activeNote?.id)"><svg width="12" height="12"><use href="#I-star"/></svg>AI Summary</button>
-        <button onclick="closePrev()" style="background:none;border:none;cursor:pointer;color:var(--mut);padding:6px;display:flex;align-items:center"><svg width="20" height="20"><use href="#I-x"/></svg></button>
+        <button class="btn btn-ghost btn-sm" onclick="openSumFor(activeNote&&activeNote.id)">
+          <svg width="12" height="12"><use href="#I-star"/></svg>AI Summary
+        </button>
+        <button onclick="closePrev()" style="background:none;border:none;cursor:pointer;color:var(--mut);padding:6px;display:flex;align-items:center">
+          <svg width="20" height="20"><use href="#I-x"/></svg>
+        </button>
       </div>
     </div>
     <div style="flex:1;overflow:hidden;background:#08080f;position:relative">
@@ -276,7 +280,7 @@ header{position:sticky;top:0;z-index:100;background:rgba(13,12,29,.92);border-bo
       <div id="pv-err" style="position:absolute;inset:0;display:none;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:40px;gap:14px;color:var(--mut)">
         <svg width="36" height="36" style="opacity:.4"><use href="#I-warn"/></svg>
         <p id="pv-emsg" style="font-size:14px;max-width:400px;line-height:1.6"></p>
-        <a id="pv-direct" href="#" target="_blank" class="btn btn-ghost btn-sm" style="display:none">Open PDF in new tab</a>
+        <a id="pv-direct" href="#" target="_blank" class="btn btn-ghost btn-sm" style="display:none">Open PDF in new tab ↗</a>
       </div>
     </div>
   </div>
@@ -285,13 +289,16 @@ header{position:sticky;top:0;z-index:100;background:rgba(13,12,29,.92);border-bo
 <!-- SUMMARIZE MODAL -->
 <div class="overlay" id="m-sum" style="display:none" onclick="if(event.target===this)closeSum()">
   <div class="modal fade-up" style="max-width:540px;padding:32px">
-    <button onclick="closeSum()" style="position:absolute;top:16px;right:16px;background:none;border:none;cursor:pointer;color:var(--mut)"><svg width="18" height="18"><use href="#I-x"/></svg></button>
+    <button onclick="closeSum()" style="position:absolute;top:16px;right:16px;background:none;border:none;cursor:pointer;color:var(--mut)">
+      <svg width="18" height="18"><use href="#I-x"/></svg>
+    </button>
     <div id="sum-choose">
       <div style="display:flex;gap:14px;align-items:flex-start;margin-bottom:24px">
         <div style="width:42px;height:42px;background:rgba(244,162,97,.14);border:1px solid rgba(244,162,97,.28);border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0">
           <svg width="18" height="18" style="color:var(--acc)"><use href="#I-star"/></svg>
         </div>
-        <div><h2 style="font-size:22px;margin-bottom:3px">Summarize with AI</h2>
+        <div>
+          <h2 style="font-size:22px;margin-bottom:3px">Summarize with AI</h2>
           <p id="sum-notename" style="color:var(--mut);font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:320px"></p>
         </div>
       </div>
@@ -335,14 +342,16 @@ header{position:sticky;top:0;z-index:100;background:rgba(13,12,29,.92);border-bo
 </div>
 
 <script>
-/* ═══════════════════════════════════════════════
-   HARDCODED CONFIG — do not change these
-   ═══════════════════════════════════════════════ */
-const WEBHOOK  = 'https://discord.com/api/webhooks/1491774008184537108/9CGbkKA88b8tG61tQOMC2V1s0T_Cqbn6hzeGzO9IihvF_LWAnqRK5M6byoLPLHto7XPX';
-const GIST_ID  = 'd917447e1711186ba4782748694cb81b';
-const GH_TOKEN = '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';
-const GIST_FILE = 'notes.json';
-const MAX_BYTES = 25 * 1024 * 1024;
+/* ═══════════════════════════════════════════════════════
+   CONFIG — safe to be public, no secret tokens needed
+   ═══════════════════════════════════════════════════════
+   Firebase Realtime Database in test mode allows open
+   read/write via REST — the URL is the only thing needed.
+   Discord webhook is write-only — no risk exposing it.
+   ═══════════════════════════════════════════════════════ */
+const FB   = 'https://sab-notes-f87e3-default-rtdb.asia-southeast1.firebasedatabase.app';
+const WH   = 'https://discord.com/api/webhooks/1491774008184537108/9CGbkKA88b8tG61tQOMC2V1s0T_Cqbn6hzeGzO9IihvF_LWAnqRK5M6byoLPLHto7XPX';
+const MAX  = 25 * 1024 * 1024; // 25 MB
 
 const FACULTIES = [
   'Architecture','Civil Engineering','Computer Engineering','Electrical Engineering',
@@ -350,62 +359,56 @@ const FACULTIES = [
   'Education (BEd)','Law (LLB)','Pharmacy','IT / Computing','Other'
 ];
 
-let notes = [], profile = JSON.parse(localStorage.getItem('sn_profile')||'null');
-let selFile = null, activeNote = null, _blobUrl = null;
-
-const $   = id => document.getElementById(id);
-const uid  = () => Date.now().toString(36)+Math.random().toString(36).slice(2);
-const fmtB = b => b < 1048576 ? (b/1024).toFixed(1)+' KB' : (b/1048576).toFixed(2)+' MB';
-const fmtD = d => new Date(d).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
-
-/* ═══════════════════════════════════════════════
-   GITHUB GIST DATABASE
-   Read  → GET  /gists/:id  (public, no auth needed)
-   Write → PATCH /gists/:id (needs token)
-   ═══════════════════════════════════════════════ */
-async function dbRead(){
+/* ── Firebase REST helpers ──────────────────────────────
+   GET  /notes.json          → returns object {id: note} or null
+   PUT  /notes/{id}.json     → writes one note (atomic, no race)
+   DELETE /notes/{id}.json   → removes one note
+   No auth header needed while DB rules are in test mode.
+   ────────────────────────────────────────────────────── */
+async function dbReadAll(){
   try {
-    // Use raw URL for reading — no auth needed, no CORS issues
-    const r = await fetch(`https://gist.githubusercontent.com/sweekar1/${GIST_ID}/raw/${GIST_FILE}?t=${Date.now()}`);
-    if(!r.ok) throw new Error('read failed');
-    return await r.json();
-  } catch {
-    // Fallback to API
-    try {
-      const r = await fetch(`https://api.github.com/gists/${GIST_ID}`,{
-        headers:{ Authorization:`Bearer ${GH_TOKEN}`, Accept:'application/vnd.github+json' }
-      });
-      if(!r.ok) throw new Error();
-      const g = await r.json();
-      const content = g.files[GIST_FILE]?.content || '[]';
-      return JSON.parse(content);
-    } catch { return null; }
+    const r = await fetch(`${FB}/notes.json`);
+    if(!r.ok) throw new Error(`HTTP ${r.status}`);
+    const data = await r.json();
+    if(!data) return [];
+    // Firebase stores as object {key: note} — convert to sorted array
+    return Object.values(data).sort((a,b)=> new Date(b.uploadedAt)-new Date(a.uploadedAt));
+  } catch(e) {
+    console.error('dbReadAll:', e);
+    return null;
   }
 }
 
-async function dbWrite(arr){
-  try {
-    await fetch(`https://api.github.com/gists/${GIST_ID}`, {
-      method: 'PATCH',
-      headers:{
-        Authorization: `Bearer ${GH_TOKEN}`,
-        Accept: 'application/vnd.github+json',
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        files:{ [GIST_FILE]:{ content: JSON.stringify(arr, null, 2) } }
-      })
-    });
-  } catch(e){ console.warn('dbWrite failed:', e); }
+async function dbAddNote(note){
+  // Use note.id as the Firebase key so it's idempotent
+  const r = await fetch(`${FB}/notes/${note.id}.json`, {
+    method: 'PUT',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify(note)
+  });
+  if(!r.ok) throw new Error(`Firebase write failed: HTTP ${r.status}`);
 }
 
-/* ═══════════════════════════════════════════════
+async function dbDeleteNote(id){
+  await fetch(`${FB}/notes/${id}.json`, { method:'DELETE' });
+}
+
+/* ── app state ── */
+let notes = [], profile = JSON.parse(localStorage.getItem('sn_profile')||'null');
+let selFile = null, activeNote = null, _blobUrl = null;
+
+const $    = id => document.getElementById(id);
+const uid  = () => Date.now().toString(36) + Math.random().toString(36).slice(2);
+const fmtB = b  => b < 1048576 ? (b/1024).toFixed(1)+' KB' : (b/1048576).toFixed(2)+' MB';
+const fmtD = d  => new Date(d).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+
+/* ══════════════════════════════════════════
    BOOT
-   ═══════════════════════════════════════════════ */
+   ══════════════════════════════════════════ */
 (async function boot(){
   FACULTIES.forEach(f=>{
-    const o = document.createElement('option');
-    o.value = o.textContent = f;
+    const o=document.createElement('option');
+    o.value=o.textContent=f;
     $('ff').appendChild(o);
   });
   if(profile){ updateChip(); applyPF(); }
@@ -415,47 +418,26 @@ async function dbWrite(arr){
 })();
 
 async function loadNotes(spin){
-  if(spin){
-    $('ref-btn').innerHTML = '<span class="spin" style="font-size:13px;color:var(--mut)">⟳</span>';
-  }
+  if(spin) $('ref-btn').innerHTML='<span class="spin" style="font-size:13px;color:var(--mut)">⟳</span>';
   showSkels();
-  const data = await dbRead();
+  const data = await dbReadAll();
   if(data === null){
-    $('br-sub').innerHTML = '<span style="color:var(--red)">Could not load notes — check your internet connection and try refreshing.</span>';
+    $('br-sub').innerHTML='<span style="color:var(--red)">Could not reach database — check internet and try refreshing.</span>';
   } else {
     notes = data;
   }
   renderGrid();
-  if(spin){
-    setTimeout(()=>{
-      $('ref-btn').innerHTML = '<svg width="13" height="13"><use href="#I-ref"/></svg>';
-    }, 400);
-  }
+  if(spin) setTimeout(()=>{ $('ref-btn').innerHTML='<svg width="13" height="13"><use href="#I-ref"/></svg>'; },400);
 }
 
 function showSkels(){
-  const g = $('grid'); g.innerHTML = '';
-  for(let i=0;i<6;i++){
-    g.innerHTML += `<div class="skel">
-      <div style="display:flex;gap:12px;margin-bottom:16px">
-        <div style="width:46px;height:54px;background:var(--bdr);border-radius:9px;flex-shrink:0"></div>
-        <div style="flex:1"><div class="sl" style="width:65%"></div><div class="sl" style="width:40%"></div></div>
-      </div>
-      <div style="display:flex;gap:6px;margin-bottom:16px">
-        <div class="sl" style="width:60px;height:22px;border-radius:20px;margin:0"></div>
-        <div class="sl" style="width:55px;height:22px;border-radius:20px;margin:0"></div>
-      </div>
-      <div style="border-top:1px solid var(--bdr);padding-top:14px;display:flex;justify-content:space-between">
-        <div class="sl" style="width:90px;height:10px;margin:0"></div>
-        <div class="sl" style="width:80px;height:28px;border-radius:8px;margin:0"></div>
-      </div>
-    </div>`;
-  }
+  const g=$('grid'); g.innerHTML='';
+  for(let i=0;i<6;i++) g.innerHTML+=`<div class="skel"><div style="display:flex;gap:12px;margin-bottom:16px"><div style="width:46px;height:54px;background:var(--bdr);border-radius:9px;flex-shrink:0"></div><div style="flex:1"><div class="sl" style="width:65%"></div><div class="sl" style="width:40%"></div></div></div><div style="display:flex;gap:6px;margin-bottom:16px"><div class="sl" style="width:60px;height:22px;border-radius:20px;margin:0"></div><div class="sl" style="width:55px;height:22px;border-radius:20px;margin:0"></div></div><div style="border-top:1px solid var(--bdr);padding-top:14px;display:flex;justify-content:space-between"><div class="sl" style="width:90px;height:10px;margin:0"></div><div class="sl" style="width:80px;height:28px;border-radius:8px;margin:0"></div></div></div>`;
 }
 
-/* ═══════════════════════════════════════════════
+/* ══════════════════════════════════════════
    ROUTING
-   ═══════════════════════════════════════════════ */
+   ══════════════════════════════════════════ */
 function goPage(name){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   $('page-'+name).classList.add('active');
@@ -464,10 +446,10 @@ function goPage(name){
   window.scrollTo(0,0);
 }
 
-/* ═══════════════════════════════════════════════
+/* ══════════════════════════════════════════
    PROFILE
-   ═══════════════════════════════════════════════ */
-const PSTEPS = [
+   ══════════════════════════════════════════ */
+const PSTEPS=[
   {q:"What's your program?",    k:'faculty',  t:'sel', opts:FACULTIES, lb:'Faculty'},
   {q:"What year are you in?",   k:'year',     t:'sel', opts:['1st Year','2nd Year','3rd Year','4th Year','5th Year'], lb:'Year'},
   {q:"Which part / semester?",  k:'semester', t:'sel', opts:['1st Part','2nd Part'], lb:'Semester'},
@@ -476,33 +458,26 @@ const PSTEPS = [
 let ps=0, pd={faculty:'',year:'',semester:'',college:''};
 
 function openProfile(){
-  pd = profile?{...profile}:{faculty:'',year:'',semester:'',college:''};
-  ps = 0;
-  $('m-pclose').style.display = profile?'block':'none';
-  $('m-pfooter').style.display = profile?'none':'block';
-  renderPS();
-  $('m-profile').style.display = 'flex';
+  pd=profile?{...profile}:{faculty:'',year:'',semester:'',college:''};
+  ps=0;
+  $('m-pclose').style.display=profile?'block':'none';
+  $('m-pfooter').style.display=profile?'none':'block';
+  renderPS(); $('m-profile').style.display='flex';
 }
 function closeProfile(){ $('m-profile').style.display='none'; }
-
 function updateChip(){
   if(!profile) return;
   $('pchip').style.display='flex';
-  $('pchip-lbl').textContent = profile.faculty.split(' ')[0]+' · '+profile.year;
+  $('pchip-lbl').textContent=profile.faculty.split(' ')[0]+' · '+profile.year;
 }
 function applyPF(){
   if(!profile) return;
   $('ff').value=profile.faculty; $('fy').value=profile.year; $('fm').value=profile.semester;
 }
-
 function renderPS(){
-  const s = PSTEPS[ps];
-  const bar = $('m-pbar'); bar.innerHTML='';
-  PSTEPS.forEach((_,i)=>{
-    const d=document.createElement('div');
-    d.style.cssText=`flex:1;height:3px;border-radius:3px;background:${i<=ps?'var(--acc)':'var(--bdr)'};transition:background .25s`;
-    bar.appendChild(d);
-  });
+  const s=PSTEPS[ps];
+  const bar=$('m-pbar'); bar.innerHTML='';
+  PSTEPS.forEach((_,i)=>{ const d=document.createElement('div'); d.style.cssText=`flex:1;height:3px;border-radius:3px;background:${i<=ps?'var(--acc)':'var(--bdr)'};transition:background .25s`; bar.appendChild(d); });
   $('m-psteplbl').textContent=`Step ${ps+1} of ${PSTEPS.length}`;
   $('m-ptitle').textContent=s.q;
   $('m-pback').style.display=ps>0?'inline-flex':'none';
@@ -524,23 +499,19 @@ function pNext(){
   if(s.t==='sel'&&!v) return;
   pd[s.k]=v;
   if(ps<PSTEPS.length-1){ ps++; renderPS(); }
-  else {
-    profile=pd; localStorage.setItem('sn_profile',JSON.stringify(profile));
-    updateChip(); applyPF(); closeProfile(); renderGrid();
-  }
+  else { profile=pd; localStorage.setItem('sn_profile',JSON.stringify(profile)); updateChip(); applyPF(); closeProfile(); renderGrid(); }
 }
 function pBack(){ if(ps>0){ ps--; renderPS(); } }
 
-/* ═══════════════════════════════════════════════
+/* ══════════════════════════════════════════
    BROWSE & FILTER
-   ═══════════════════════════════════════════════ */
+   ══════════════════════════════════════════ */
 function clearF(){ $('fs').value=''; $('ff').value=''; $('fy').value=''; $('fm').value=''; renderGrid(); }
 
 function renderGrid(){
   const q=$('fs').value.toLowerCase().trim();
   const fac=$('ff').value, yr=$('fy').value, sem=$('fm').value;
   const hasF=q||fac||yr||sem;
-
   const list=notes.filter(n=>{
     if(fac && n.faculty!==fac) return false;
     if(yr  && n.year!==yr)     return false;
@@ -548,37 +519,18 @@ function renderGrid(){
     if(q && !n.title.toLowerCase().includes(q) && !(n.subject||'').toLowerCase().includes(q)) return false;
     return true;
   });
-
-  $('br-title').textContent = fac||(profile?.faculty)||'All Study Notes';
-  $('br-sub').innerHTML = `Showing <strong style="color:var(--acc)">${list.length}</strong> of ${notes.length} notes`+(profile?` · ${profile.year} · ${profile.semester}`:'');
-  $('clr-btn').style.display = hasF?'inline-flex':'none';
-
+  $('br-title').textContent=fac||(profile?.faculty)||'All Study Notes';
+  $('br-sub').innerHTML=`Showing <strong style="color:var(--acc)">${list.length}</strong> of ${notes.length} notes`+(profile?` · ${profile.year} · ${profile.semester}`:'');
+  $('clr-btn').style.display=hasF?'inline-flex':'none';
   const pills=$('pills'); pills.innerHTML='';
-  const mkP=(label,clr)=>{
-    const s=document.createElement('span'); s.className='pill';
-    s.innerHTML=`${label}<button onclick="${clr}"><svg width="11" height="11"><use href="#I-x"/></svg></button>`;
-    pills.appendChild(s);
-  };
+  const mkP=(label,clr)=>{ const s=document.createElement('span'); s.className='pill'; s.innerHTML=`${label}<button onclick="${clr}"><svg width="11" height="11"><use href="#I-x"/></svg></button>`; pills.appendChild(s); };
   if(fac) mkP(fac,`$('ff').value='';renderGrid()`);
   if(yr)  mkP(yr, `$('fy').value='';renderGrid()`);
   if(sem) mkP(sem,`$('fm').value='';renderGrid()`);
   if(q)   mkP(`"${q}"`,`$('fs').value='';renderGrid()`);
-
   const g=$('grid'); g.innerHTML='';
   if(!list.length){
-    g.innerHTML=`<div style="grid-column:1/-1;text-align:center;padding:80px 24px">
-      <div style="width:64px;height:64px;background:rgba(244,162,97,.08);border:1px solid rgba(244,162,97,.15);border-radius:16px;display:flex;align-items:center;justify-content:center;margin:0 auto 20px">
-        <svg width="28" height="28" style="color:var(--acc);opacity:.6"><use href="#I-file"/></svg>
-      </div>
-      <h3 style="font-size:22px;margin-bottom:8px">No notes found</h3>
-      <p style="color:var(--mut);font-size:14px;margin-bottom:28px;max-width:340px;margin-left:auto;margin-right:auto">
-        ${notes.length===0?'Be the first to share a note!':'Try adjusting or clearing your filters.'}
-      </p>
-      <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
-        ${hasF?`<button class="btn btn-ghost" onclick="clearF()"><svg width="14" height="14"><use href="#I-x"/></svg>Clear Filters</button>`:''}
-        <button class="btn btn-acc" onclick="goPage('upload')"><svg width="14" height="14"><use href="#I-plus"/></svg>Upload a Note</button>
-      </div>
-    </div>`;
+    g.innerHTML=`<div style="grid-column:1/-1;text-align:center;padding:80px 24px"><div style="width:64px;height:64px;background:rgba(244,162,97,.08);border:1px solid rgba(244,162,97,.15);border-radius:16px;display:flex;align-items:center;justify-content:center;margin:0 auto 20px"><svg width="28" height="28" style="color:var(--acc);opacity:.6"><use href="#I-file"/></svg></div><h3 style="font-size:22px;margin-bottom:8px">No notes found</h3><p style="color:var(--mut);font-size:14px;margin-bottom:28px;max-width:340px;margin-left:auto;margin-right:auto">${notes.length===0?'Be the first to share a note!':'Try adjusting or clearing your filters.'}</p><div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">${hasF?`<button class="btn btn-ghost" onclick="clearF()"><svg width="14" height="14"><use href="#I-x"/></svg>Clear Filters</button>`:''}<button class="btn btn-acc" onclick="goPage('upload')"><svg width="14" height="14"><use href="#I-plus"/></svg>Upload a Note</button></div></div>`;
     return;
   }
   list.forEach((n,i)=>g.appendChild(mkCard(n,i)));
@@ -587,30 +539,7 @@ function renderGrid(){
 function mkCard(n,i){
   const d=document.createElement('div');
   d.className='card fade-up'; d.style.animationDelay=`${i*35}ms`;
-  d.innerHTML=`
-    <div style="display:flex;gap:14px;margin-bottom:14px">
-      <div style="width:46px;height:54px;background:rgba(244,162,97,.1);border:1px solid rgba(244,162,97,.18);border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0">
-        <svg width="20" height="20" style="color:var(--acc)"><use href="#I-file"/></svg>
-      </div>
-      <div style="flex:1;min-width:0">
-        <h3 style="font-size:15px;font-weight:600;color:var(--txt);margin-bottom:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-family:'Crimson Pro',serif">${n.title}</h3>
-        <p style="color:var(--mut);font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${n.subject||'—'}</p>
-      </div>
-    </div>
-    <div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:16px">
-      <span class="tag">${n.faculty}</span>
-      <span class="tag">${n.year}</span>
-      <span class="tag">${n.semester}</span>
-      ${n.college?`<span class="tag" style="max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${n.college}</span>`:''}
-    </div>
-    <div style="display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--bdr);padding-top:14px">
-      <span style="color:var(--mut);font-size:11px">${fmtD(n.uploadedAt)} · ${fmtB(n.fileSize)}</span>
-      <div id="ac-${n.id}" style="display:flex;gap:6px">
-        <button class="btn btn-ghost btn-sm" onclick="confirmDel('${n.id}')" title="Delete"><svg width="12" height="12"><use href="#I-trash"/></svg></button>
-        <button class="btn btn-ghost btn-sm" onclick="openSumFor('${n.id}')"><svg width="12" height="12"><use href="#I-star"/></svg>AI</button>
-        <button class="btn btn-acc btn-sm" onclick="openPrev('${n.id}')"><svg width="12" height="12"><use href="#I-eye"/></svg>View</button>
-      </div>
-    </div>`;
+  d.innerHTML=`<div style="display:flex;gap:14px;margin-bottom:14px"><div style="width:46px;height:54px;background:rgba(244,162,97,.1);border:1px solid rgba(244,162,97,.18);border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="20" height="20" style="color:var(--acc)"><use href="#I-file"/></svg></div><div style="flex:1;min-width:0"><h3 style="font-size:15px;font-weight:600;color:var(--txt);margin-bottom:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-family:'Crimson Pro',serif">${n.title}</h3><p style="color:var(--mut);font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${n.subject||'—'}</p></div></div><div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:16px"><span class="tag">${n.faculty}</span><span class="tag">${n.year}</span><span class="tag">${n.semester}</span>${n.college?`<span class="tag" style="max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${n.college}</span>`:''}</div><div style="display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--bdr);padding-top:14px"><span style="color:var(--mut);font-size:11px">${fmtD(n.uploadedAt)} · ${fmtB(n.fileSize)}</span><div id="ac-${n.id}" style="display:flex;gap:6px"><button class="btn btn-ghost btn-sm" onclick="confirmDel('${n.id}')" title="Delete"><svg width="12" height="12"><use href="#I-trash"/></svg></button><button class="btn btn-ghost btn-sm" onclick="openSumFor('${n.id}')"><svg width="12" height="12"><use href="#I-star"/></svg>AI</button><button class="btn btn-acc btn-sm" onclick="openPrev('${n.id}')"><svg width="12" height="12"><use href="#I-eye"/></svg>View</button></div></div>`;
   return d;
 }
 
@@ -619,14 +548,14 @@ function confirmDel(id){
   el.innerHTML=`<button class="btn btn-danger btn-sm" onclick="delNote('${id}')">Confirm</button><button class="btn btn-ghost btn-sm" onclick="renderGrid()">Cancel</button>`;
 }
 async function delNote(id){
+  await dbDeleteNote(id);
   notes=notes.filter(n=>n.id!==id);
-  await dbWrite(notes);
   renderGrid();
 }
 
-/* ═══════════════════════════════════════════════
+/* ══════════════════════════════════════════
    UPLOAD
-   ═══════════════════════════════════════════════ */
+   ══════════════════════════════════════════ */
 function resetForm(){
   selFile=null;
   $('dz-idle').style.display='block'; $('dz-ok').style.display='none';
@@ -642,7 +571,7 @@ function resetForm(){
 function onDrop(e){ e.preventDefault(); $('dz').classList.remove('drag'); onFile(e.dataTransfer.files[0]); }
 function onFile(f){
   if(!f) return;
-  if(f.type!=='application/pdf' && !f.name.toLowerCase().endsWith('.pdf')){ showUE('Only PDF files are accepted.'); return; }
+  if(f.type!=='application/pdf'&&!f.name.toLowerCase().endsWith('.pdf')){ showUE('Only PDF files are accepted.'); return; }
   selFile=f;
   $('dz-idle').style.display='none'; $('dz-ok').style.display='block';
   $('dz-name').textContent=f.name;
@@ -659,7 +588,7 @@ function showUE(msg){
   $('up-err').innerHTML=`<div class="err-box"><svg width="15" height="15" style="flex-shrink:0;margin-top:1px"><use href="#I-warn"/></svg><span>${msg}</span></div>`;
 }
 
-/* canvas-based PDF compression for files > 25MB */
+/* canvas PDF compression for files > 25MB */
 async function compressPDF(file){
   if(!window.pdfjsLib){
     await new Promise((res,rej)=>{ const s=document.createElement('script'); s.src='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js'; s.onload=res; s.onerror=rej; document.head.appendChild(s); });
@@ -700,9 +629,9 @@ async function doUpload(){
   $('sub-btn').disabled=true; $('can-btn').disabled=true;
   $('sub-btn').innerHTML='<span class="spin">⟳</span> Working…';
 
-  let fileToSend = selFile;
+  let fileToSend=selFile;
 
-  if(selFile.size > MAX_BYTES){
+  if(selFile.size > MAX){
     if(selFile.size > 100*1024*1024){
       $('sub-btn').disabled=false; $('can-btn').disabled=false;
       $('sub-btn').innerHTML='<svg width="14" height="14"><use href="#I-up"/></svg>Upload Note';
@@ -711,22 +640,21 @@ async function doUpload(){
     }
     setP(10,'Compressing PDF…');
     try {
-      fileToSend = await compressPDF(selFile);
-      if(fileToSend.size > MAX_BYTES){
+      fileToSend=await compressPDF(selFile);
+      if(fileToSend.size>MAX){
         $('sub-btn').disabled=false; $('can-btn').disabled=false;
         $('sub-btn').innerHTML='<svg width="14" height="14"><use href="#I-up"/></svg>Upload Note';
-        showUE(`Still ${fmtB(fileToSend.size)} after compression — please use <a href="https://smallpdf.com/compress-pdf" target="_blank" style="color:var(--acc)">Smallpdf</a> to reduce it further.`);
+        showUE(`Still ${fmtB(fileToSend.size)} after compression. Please use <a href="https://smallpdf.com/compress-pdf" target="_blank" style="color:var(--acc)">Smallpdf</a> to reduce it further.`);
         return;
       }
     } catch(e){
       $('sub-btn').disabled=false; $('can-btn').disabled=false;
       $('sub-btn').innerHTML='<svg width="14" height="14"><use href="#I-up"/></svg>Upload Note';
-      showUE('Compression failed: '+e.message);
-      return;
+      showUE('Compression failed: '+e.message); return;
     }
   }
 
-  const note = {
+  const note={
     id: uid(),
     title:    $('u-title').value.trim(),
     subject:  $('u-sub').value.trim(),
@@ -743,77 +671,68 @@ async function doUpload(){
   setP(75,'Uploading to Discord…');
 
   try {
-    /* Send to Discord — compact message in #all-uploads */
-    const fd = new FormData();
+    /* 1 — Upload PDF to Discord, get back public CDN URL */
+    const fd=new FormData();
     fd.append('payload_json', JSON.stringify({
-      content: `📄 **${note.subject}** · ${note.faculty}\n📅 ${note.year} · ${note.semester}${note.college?' · '+note.college:''}\n🆔 \`${note.id}\``
+      content:`📄 **${note.subject}** · ${note.faculty}\n📅 ${note.year} · ${note.semester}${note.college?' · '+note.college:''}\n🆔 \`${note.id}\``
     }));
     fd.append('file', fileToSend, note.fileName);
 
-    const dRes = await fetch(WEBHOOK+'?wait=true', {method:'POST', body:fd});
-    if(!dRes.ok){
-      const t = await dRes.text();
-      throw new Error(`Discord error ${dRes.status}: ${t.slice(0,150)}`);
-    }
-    const dMsg = await dRes.json();
-    const cdnUrl = dMsg?.attachments?.[0]?.url;
-    if(!cdnUrl) throw new Error('Discord did not return a file URL. File may be over 25 MB.');
-    note.cdnUrl = cdnUrl;
+    const dRes=await fetch(WH+'?wait=true',{method:'POST',body:fd});
+    if(!dRes.ok){ const t=await dRes.text(); throw new Error(`Discord ${dRes.status}: ${t.slice(0,120)}`); }
+    const dMsg=await dRes.json();
+    const cdnUrl=dMsg?.attachments?.[0]?.url;
+    if(!cdnUrl) throw new Error('Discord did not return a file URL. File may still be over 25 MB.');
+    note.cdnUrl=cdnUrl;
 
-    /* Save to shared Gist database */
-    setP(90,'Saving to shared database…');
-    const latest = await dbRead() || [];
-    latest.unshift(note);
-    notes = latest;
-    await dbWrite(notes);
+    /* 2 — Write note to Firebase (visible to ALL users instantly) */
+    setP(90,'Saving to database…');
+    await dbAddNote(note);
+    notes.unshift(note);
 
     setP(100,'Done!','var(--grn)');
     $('sub-btn').innerHTML='<svg width="14" height="14"><use href="#I-ok"/></svg> Uploaded!';
-    setTimeout(()=>goPage('browse'), 1300);
+    setTimeout(()=>goPage('browse'),1300);
 
   } catch(e){
     $('sub-btn').disabled=false; $('can-btn').disabled=false;
     $('sub-btn').innerHTML='<svg width="14" height="14"><use href="#I-up"/></svg>Retry';
     $('up-prog').style.display='none';
-    showUE(e.message || 'Upload failed — please try again.');
+    showUE(e.message||'Upload failed — please try again.');
   }
 }
 
-/* ═══════════════════════════════════════════════
-   PREVIEW  — fetch as blob to bypass Discord CDN
-   X-Frame-Options (which breaks direct iframe src)
-   ═══════════════════════════════════════════════ */
+/* ══════════════════════════════════════════
+   PREVIEW — fetch as blob to bypass Discord
+   CDN's X-Frame-Options iframe block
+   ══════════════════════════════════════════ */
 function openPrev(id){
-  activeNote = notes.find(n=>n.id===id); if(!activeNote) return;
-  $('pv-title').textContent = activeNote.title;
-  $('pv-meta').textContent  = `${activeNote.faculty} · ${activeNote.year} · ${activeNote.semester}${activeNote.college?' · '+activeNote.college:''}`;
+  activeNote=notes.find(n=>n.id===id); if(!activeNote) return;
+  $('pv-title').textContent=activeNote.title;
+  $('pv-meta').textContent=`${activeNote.faculty} · ${activeNote.year} · ${activeNote.semester}${activeNote.college?' · '+activeNote.college:''}`;
   $('pv-load').style.display='flex';
   $('pv-frame').style.display='none';
   $('pv-err').style.display='none';
   $('m-prev').style.display='flex';
-
   if(_blobUrl){ URL.revokeObjectURL(_blobUrl); _blobUrl=null; }
-
   if(!activeNote.cdnUrl){ showPE('No file URL for this note. Delete and re-upload it.'); return; }
-
   fetch(activeNote.cdnUrl)
     .then(r=>{ if(!r.ok) throw new Error(`HTTP ${r.status}`); return r.blob(); })
     .then(blob=>{
       if(!blob.size) throw new Error('Empty response — link may have expired.');
-      _blobUrl = URL.createObjectURL(blob);
-      const fr = $('pv-frame');
-      fr.onload = ()=>{ $('pv-load').style.display='none'; fr.style.display='block'; };
-      fr.src = _blobUrl;
+      _blobUrl=URL.createObjectURL(blob);
+      const fr=$('pv-frame');
+      fr.onload=()=>{ $('pv-load').style.display='none'; fr.style.display='block'; };
+      fr.src=_blobUrl;
     })
     .catch(e=>showPE(`Could not load PDF: ${e.message}`, activeNote.cdnUrl));
 }
-function showPE(msg, directUrl){
+function showPE(msg,directUrl){
   $('pv-load').style.display='none';
   const el=$('pv-err'); el.style.display='flex';
   $('pv-emsg').textContent=msg;
   const lnk=$('pv-direct');
-  if(directUrl){ lnk.href=directUrl; lnk.style.display='inline-flex'; }
-  else lnk.style.display='none';
+  if(directUrl){ lnk.href=directUrl; lnk.style.display='inline-flex'; } else lnk.style.display='none';
 }
 function closePrev(){
   $('m-prev').style.display='none';
@@ -821,16 +740,15 @@ function closePrev(){
   if(_blobUrl){ URL.revokeObjectURL(_blobUrl); _blobUrl=null; }
 }
 
-/* ═══════════════════════════════════════════════
+/* ══════════════════════════════════════════
    SUMMARIZE
-   ═══════════════════════════════════════════════ */
+   ══════════════════════════════════════════ */
 function openSumFor(id){
   if(!id) return;
-  activeNote = notes.find(n=>n.id===id); if(!activeNote) return;
+  activeNote=notes.find(n=>n.id===id); if(!activeNote) return;
   $('sum-notename').textContent=activeNote.title;
   $('sum-err').style.display='none';
-  showSumChoose();
-  $('m-sum').style.display='flex';
+  showSumChoose(); $('m-sum').style.display='flex';
 }
 function closeSum(){ $('m-sum').style.display='none'; }
 function showSumChoose(){ $('sum-choose').style.display='block'; $('sum-loading').style.display='none'; $('sum-result').style.display='none'; }
