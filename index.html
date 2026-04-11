@@ -98,7 +98,9 @@ header{position:sticky;top:0;z-index:100;background:rgba(13,12,29,.92);border-bo
   <symbol id="I-ref"   viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></symbol>
   <symbol id="I-ext"   viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></symbol>
   <symbol id="I-key"   viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></symbol>
-  <symbol id="I-out"   viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></symbol>
+  <symbol id="I-img"   viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></symbol>
+  <symbol id="I-doc"   viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></symbol>
+  <symbol id="I-ppt"   viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><path d="M9 13h4a2 2 0 0 1 0 4H9v-4z"/><line x1="9" y1="17" x2="9" y2="21"/></symbol>
 </svg>
 
 <div id="app">
@@ -109,7 +111,7 @@ header{position:sticky;top:0;z-index:100;background:rgba(13,12,29,.92);border-bo
       <span class="logo-text">Sab Notes</span>
     </button>
     <div class="nav-r">
-      <span class="ref-hint"><h1>REFRESH  →</h1></span>
+      <span class="ref-hint"><h2>Refresh-></h2></span>
       <button class="btn btn-ghost btn-sm" id="ref-btn" onclick="loadNotes(true)" title="Refresh notes">
         <svg width="13" height="13"><use href="#I-ref"/></svg>
       </button>
@@ -117,14 +119,18 @@ header{position:sticky;top:0;z-index:100;background:rgba(13,12,29,.92);border-bo
         <svg width="12" height="12"><use href="#I-grad"/></svg>
         <span id="pchip-lbl">Profile</span>
       </button>
+      <!-- admin area: shows lock button OR badge+logout -->
 
+      </div>
       <button class="btn btn-acc btn-sm" onclick="goPage('upload')">
         <svg width="14" height="14"><use href="#I-plus"/></svg>Upload
       </button>
 
-      <a href="https://discord.gg/ZrsWbdSs" >Study Together</a>
-
+       <a href="https://discord.gg/ZrsWbdSs" ><h2>Study Together</h2></a>
     </div>
+
+
+
   </div>
 </header>
 
@@ -133,7 +139,7 @@ header{position:sticky;top:0;z-index:100;background:rgba(13,12,29,.92);border-bo
   <div class="inner">
     <div style="margin-bottom:28px">
       <h1 id="br-title" style="font-size:38px;margin-bottom:6px">All Study Notes</h1>
-      <p id="br-sub" style="color:var(--mut);font-size:15px">Have you pressed the refresh button ?</p>
+      <p id="br-sub" style="color:var(--mut);font-size:15px">Press refresh</p>
     </div>
     <div class="filter-bar">
       <div class="sw">
@@ -167,20 +173,20 @@ header{position:sticky;top:0;z-index:100;background:rgba(13,12,29,.92);border-bo
       <svg width="13" height="13"><use href="#I-back"/></svg>Back
     </button>
     <h1 style="font-size:36px;margin-bottom:6px">Upload a Note</h1>
-    <p style="color:var(--mut);margin-bottom:32px;font-size:15px">Share your PDFs with fellow students · Max 25 MB</p>
+    <p style="color:var(--mut);margin-bottom:32px;font-size:15px">Share PDFs, Word docs, or images with fellow students · Max 25 MB</p>
 
     <div class="dropzone" id="dz"
       onclick="document.getElementById('fi').click()"
       ondragover="event.preventDefault();this.classList.add('drag')"
       ondragleave="this.classList.remove('drag')"
       ondrop="onDrop(event)" style="margin-bottom:28px">
-      <input type="file" id="fi" accept=".pdf,application/pdf" style="display:none" onchange="onFile(this.files[0])"/>
+      <input type="file" id="fi" accept=".pdf,.doc,.docx,.ppt,.pptx,.jpg,.jpeg,.png,.gif,.webp,.bmp,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.ms-powerpoint,application/vnd.openxmlformats-officedocument.presentationml.presentation,image/*" style="display:none" onchange="onFile(this.files[0])"/>
       <div id="dz-idle">
         <div style="width:52px;height:52px;background:rgba(244,162,97,.1);border:1px solid rgba(244,162,97,.2);border-radius:12px;display:flex;align-items:center;justify-content:center;margin:0 auto 14px">
           <svg width="24" height="24" style="color:var(--acc)"><use href="#I-up"/></svg>
         </div>
-        <p style="color:var(--txt);font-weight:500;margin-bottom:4px;font-size:15px">Drop your PDF here, or click to browse</p>
-        <p style="color:var(--mut);font-size:13px">PDF only · Maximum 25 MB</p>
+        <p style="color:var(--txt);font-weight:500;margin-bottom:4px;font-size:15px">Drop your file here, or click to browse</p>
+        <p style="color:var(--mut);font-size:13px">PDF · Word · PowerPoint · Images · Maximum 25 MB</p>
       </div>
       <div id="dz-ok" style="display:none">
         <div style="width:52px;height:52px;background:rgba(82,183,136,.12);border:1px solid rgba(82,183,136,.25);border-radius:12px;display:flex;align-items:center;justify-content:center;margin:0 auto 14px">
@@ -271,8 +277,9 @@ header{position:sticky;top:0;z-index:100;background:rgba(13,12,29,.92);border-bo
     <div style="width:44px;height:44px;background:rgba(244,162,97,.14);border:1px solid rgba(244,162,97,.3);border-radius:10px;display:flex;align-items:center;justify-content:center;margin-bottom:18px">
       <svg width="18" height="18" style="color:var(--acc)"><use href="#I-key"/></svg>
     </div>
-    <h2 style="font-size:24px;margin-bottom:6px">Why are you here go study !!!</h2>
-    <p style="color:var(--mut);font-size:13px;margin-bottom:24px;line-height:1.6"></p>
+    <h2 style="font-size:24px;margin-bottom:6px">Admin Login</h2>
+    <p style="color:var(--mut);font-size:13px;margin-bottom:24px;line-height:1.6">Enter the admin password to unlock delete controls.</p>
+    <label class="label">Password</label>
     <input type="password" id="admin-pw" placeholder="Enter password…" onkeydown="if(event.key==='Enter')checkAdmin()"/>
     <p id="admin-err" style="display:none;color:var(--red);font-size:13px;margin-top:10px">Wrong password. Try again.</p>
     <button class="btn btn-acc" onclick="checkAdmin()" style="width:100%;margin-top:18px;justify-content:center">
@@ -282,9 +289,18 @@ header{position:sticky;top:0;z-index:100;background:rgba(13,12,29,.92);border-bo
 </div>
 
 <script>
-
+/* ════════════════════════════════════════════════════
+   CONFIG
+   ════════════════════════════════════════════════════
+   ADMIN_PASS : change this to any password you want.
+                Only you will know it — it's not visible
+                in the UI, just in the source code.
+   FB         : your Firebase Realtime Database URL.
+   WH         : Discord webhook — safe to expose (write-only).
+   ════════════════════════════════════════════════════ */
+const ADMIN_PASS = 'sabnotes2025';   // ← change this to your own password
 const FB         = 'https://sab-notes-f87e3-default-rtdb.asia-southeast1.firebasedatabase.app';
-const WH         = 'https://discord.com/api/webhooks/1491774008184537108/9CGbkKA88b8tG61tQOMC2V1s0T_Cqbn6hzeGzO9IihvF_LWAnqRK5M6byoLPLHto7XPX';const k= 'sudanisthebesthomeministerEVER';
+const WH         = 'https://discord.com/api/webhooks/1491774008184537108/9CGbkKA88b8tG61tQOMC2V1s0T_Cqbn6hzeGzO9IihvF_LWAnqRK5M6byoLPLHto7XPX';
 const MAX        = 25 * 1024 * 1024;
 
 const FACULTIES = [
@@ -332,10 +348,10 @@ async function dbDel(id){
   if(!r.ok) throw new Error(`Firebase delete failed HTTP ${r.status}`);
 }
 
-
-
-
-
+/* ════════════════════════════════════════════════════
+   ADMIN AUTH  (password checked client-side,
+   session stored so you stay logged in per tab)
+   ════════════════════════════════════════════════════ */
 function openAdminLogin(){
   if(isAdmin){ adminLogout(); return; }
   $('admin-pw').value=''; $('admin-err').style.display='none';
@@ -346,10 +362,7 @@ function closeAdminLogin(){ $('m-admin').style.display='none'; }
 
 function checkAdmin(){
   const pw=$('admin-pw').value;
-
-  //Love your efforts pls dont delete everything by being admin love you 
-
-  if(pw===k){
+  if(pw===ADMIN_PASS){
     isAdmin=true; sessionStorage.setItem('sn_admin','1');
     closeAdminLogin(); updateAdminArea(); renderGrid();
   } else {
@@ -495,7 +508,7 @@ function renderGrid(){
   });
   $('br-title').textContent=fac||(profile?.faculty)||'All Study Notes';
   if(notes.length===0){
-    $('br-sub').innerHTML='Have you pressed the refresh button ?';
+    $('br-sub').innerHTML='No notes yet — be the first to upload one!';
   } else {
     $('br-sub').innerHTML=`Showing <strong style="color:var(--acc)">${list.length}</strong> of ${notes.length} notes`+(profile?` · ${profile.year} · ${profile.semester}`:'');
   }
@@ -514,16 +527,25 @@ function renderGrid(){
   list.forEach((n,i)=>g.appendChild(mkCard(n,i)));
 }
 
+function fileIcon(n){
+  const name=(n.fileName||n.title||'').toLowerCase();
+  if(name.match(/\.(jpg|jpeg|png|gif|webp|bmp)$/)) return '#I-img';
+  if(name.match(/\.(doc|docx)$/))                  return '#I-doc';
+  if(name.match(/\.(ppt|pptx)$/))                  return '#I-ppt';
+  return '#I-file';
+}
+
 function mkCard(n,i){
   const d=document.createElement('div');
   d.className='card fade-up'; d.style.animationDelay=`${i*35}ms`;
   const delBtn=isAdmin
     ?`<button class="btn btn-danger btn-sm" id="del-${n.id}" onclick="confirmDel('${n.id}')" title="Delete"><svg width="12" height="12"><use href="#I-trash"/></svg></button>`
     :'';
+  const icon=fileIcon(n);
   d.innerHTML=`
     <div style="display:flex;gap:14px;margin-bottom:14px">
       <div style="width:46px;height:54px;background:rgba(244,162,97,.1);border:1px solid rgba(244,162,97,.18);border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0">
-        <svg width="20" height="20" style="color:var(--acc)"><use href="#I-file"/></svg>
+        <svg width="20" height="20" style="color:var(--acc)"><use href="${icon}"/></svg>
       </div>
       <div style="flex:1;min-width:0">
         <h3 style="font-size:15px;font-weight:600;color:var(--txt);margin-bottom:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-family:'Crimson Pro',serif">${n.title}</h3>
@@ -544,7 +566,7 @@ function mkCard(n,i){
            class="btn btn-acc btn-sm"
            ${!n.cdnUrl?'style="opacity:.45;pointer-events:none"':''}
            onclick="this.href&&this.href!=='#'||event.preventDefault()">
-          <svg width="12" height="12"><use href="#I-ext"/></svg>View PDF
+          <svg width="12" height="12"><use href="#I-ext"/></svg>View File
         </a>
       </div>
     </div>`;
@@ -580,7 +602,17 @@ function resetForm(){
 function onDrop(e){ e.preventDefault(); $('dz').classList.remove('drag'); onFile(e.dataTransfer.files[0]); }
 function onFile(f){
   if(!f) return;
-  if(f.type!=='application/pdf'&&!f.name.toLowerCase().endsWith('.pdf')){ showUE('Only PDF files are accepted.'); return; }
+  const ALLOWED = [
+    'application/pdf',
+    'application/msword',
+    'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    'application/vnd.ms-powerpoint',
+    'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+  ];
+  const ALLOWED_EXT = ['.pdf','.doc','.docx','.ppt','.pptx','.jpg','.jpeg','.png','.gif','.webp','.bmp'];
+  const ext = '.'+f.name.split('.').pop().toLowerCase();
+  const ok = ALLOWED.includes(f.type) || f.type.startsWith('image/') || ALLOWED_EXT.includes(ext);
+  if(!ok){ showUE('Unsupported file type. Please upload a PDF, Word doc, PowerPoint, or image (JPG, PNG, etc.)'); return; }
   selFile=f; $('dz-idle').style.display='none'; $('dz-ok').style.display='block';
   $('dz-name').textContent=f.name; $('dz-sz').textContent=`${fmtB(f.size)} · Click or drag to change`;
   $('up-err').style.display='none';
