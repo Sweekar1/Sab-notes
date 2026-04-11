@@ -16,7 +16,6 @@
 html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif;min-height:100vh;font-size:15px}
 h1,h2,h3{font-family:'Crimson Pro',serif;font-weight:700;line-height:1.15}
 a{color:var(--acc);text-decoration:none}
-a:hover{text-decoration:underline}
 p{line-height:1.6}
 .btn{display:inline-flex;align-items:center;gap:6px;padding:10px 20px;border-radius:8px;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;transition:all .18s;white-space:nowrap;line-height:1;vertical-align:middle}
 .btn:disabled{opacity:.4;cursor:not-allowed;transform:none!important}
@@ -27,8 +26,8 @@ p{line-height:1.6}
 .btn-danger{background:transparent;color:var(--red);border:1px solid rgba(224,122,95,.3)}
 .btn-danger:hover:not(:disabled){background:rgba(224,122,95,.08);border-color:var(--red)}
 .btn-sm{padding:6px 12px;font-size:13px}
-input,select,textarea{width:100%;padding:10px 14px;background:var(--surf);border:1px solid var(--bdr);border-radius:8px;color:var(--txt);font-family:'DM Sans',sans-serif;font-size:14px;outline:none;transition:border-color .18s}
-input:focus,select:focus,textarea:focus{border-color:var(--acc)}
+input,select{width:100%;padding:10px 14px;background:var(--surf);border:1px solid var(--bdr);border-radius:8px;color:var(--txt);font-family:'DM Sans',sans-serif;font-size:14px;outline:none;transition:border-color .18s}
+input:focus,select:focus{border-color:var(--acc)}
 select option{background:var(--surf)}
 ::placeholder{color:var(--mut)}
 .card{background:var(--card);border:1px solid var(--bdr);border-radius:14px;transition:border-color .18s,transform .18s,box-shadow .18s;padding:20px}
@@ -43,6 +42,7 @@ select option{background:var(--surf)}
 @keyframes spin{to{transform:rotate(360deg)}}
 @keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 @keyframes shimmer{from{transform:translateX(-100%)}to{transform:translateX(100%)}}
+@keyframes pulse{0%,100%{opacity:.9}50%{opacity:.4}}
 .spin{animation:spin .9s linear infinite;display:inline-block}
 .fade-up{animation:fadeUp .28s ease both}
 .pill{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:20px;font-size:12px;font-weight:500;background:rgba(244,162,97,.12);border:1px solid rgba(244,162,97,.25);color:var(--acc)}
@@ -55,7 +55,6 @@ header{position:sticky;top:0;z-index:100;background:rgba(13,12,29,.92);border-bo
 .logo{background:none;border:none;cursor:pointer;display:flex;align-items:center;gap:10px}
 .logo-icon{width:34px;height:34px;background:var(--acc);border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .logo-text{font-family:'Crimson Pro',serif;font-size:22px;font-weight:700;color:var(--txt)}
-#app{min-height:100vh}
 .page{display:none}
 .page.active{display:block}
 .inner{max-width:1200px;margin:0 auto;padding:36px 24px}
@@ -71,32 +70,35 @@ header{position:sticky;top:0;z-index:100;background:rgba(13,12,29,.92);border-bo
 .nav-r{display:flex;align-items:center;gap:8px}
 .pchip{background:none;border:1px solid var(--bdr);border-radius:8px;padding:6px 14px;color:var(--mut);cursor:pointer;font-size:12px;font-family:'DM Sans',sans-serif;display:flex;align-items:center;gap:6px;transition:all .18s}
 .pchip:hover{color:var(--txt);border-color:var(--mut)}
-@media(max-width:600px){
+.admin-badge{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:600;background:rgba(244,162,97,.15);border:1px solid rgba(244,162,97,.4);color:var(--acc)}
+.ref-hint{font-size:12px;color:var(--mut);animation:pulse 2.5s ease infinite;white-space:nowrap;pointer-events:none}
+@media(max-width:700px){
   .hinner{padding:0 14px}
   .inner,.inner-sm{padding:24px 14px}
   .notes-grid{grid-template-columns:1fr}
   .filter-bar{gap:8px}
+  .ref-hint{display:none}
 }
 </style>
 </head>
 <body>
 
 <svg xmlns="http://www.w3.org/2000/svg" style="display:none">
-  <symbol id="I-book"   viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></symbol>
-  <symbol id="I-up"     viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></symbol>
-  <symbol id="I-search" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></symbol>
-  <symbol id="I-eye"    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></symbol>
-  <symbol id="I-trash"  viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6M9 6V4h6v2"/></symbol>
-  <symbol id="I-star"   viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></symbol>
-  <symbol id="I-x"      viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></symbol>
-  <symbol id="I-ok"     viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></symbol>
-  <symbol id="I-plus"   viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></symbol>
-  <symbol id="I-back"   viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></symbol>
-  <symbol id="I-grad"   viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></symbol>
-  <symbol id="I-file"   viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><polyline points="13 2 13 9 20 9"/></symbol>
-  <symbol id="I-copy"   viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></symbol>
-  <symbol id="I-warn"   viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></symbol>
-  <symbol id="I-ref"    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></symbol>
+  <symbol id="I-book"  viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></symbol>
+  <symbol id="I-up"    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></symbol>
+  <symbol id="I-search"viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></symbol>
+  <symbol id="I-trash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6M9 6V4h6v2"/></symbol>
+  <symbol id="I-x"     viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></symbol>
+  <symbol id="I-ok"    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></symbol>
+  <symbol id="I-plus"  viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></symbol>
+  <symbol id="I-back"  viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></symbol>
+  <symbol id="I-grad"  viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></symbol>
+  <symbol id="I-file"  viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><polyline points="13 2 13 9 20 9"/></symbol>
+  <symbol id="I-warn"  viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></symbol>
+  <symbol id="I-ref"   viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></symbol>
+  <symbol id="I-ext"   viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></symbol>
+  <symbol id="I-key"   viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></symbol>
+  <symbol id="I-out"   viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></symbol>
 </svg>
 
 <div id="app">
@@ -107,13 +109,20 @@ header{position:sticky;top:0;z-index:100;background:rgba(13,12,29,.92);border-bo
       <span class="logo-text">Sab Notes</span>
     </button>
     <div class="nav-r">
+      <span class="ref-hint"><h1>REFRESH  →</h1></span>
+      <button class="btn btn-ghost btn-sm" id="ref-btn" onclick="loadNotes(true)" title="Refresh notes">
+        <svg width="13" height="13"><use href="#I-ref"/></svg>
+      </button>
       <button class="pchip" id="pchip" onclick="openProfile()" style="display:none">
         <svg width="12" height="12"><use href="#I-grad"/></svg>
         <span id="pchip-lbl">Profile</span>
       </button>
-      <button class="btn btn-ghost btn-sm" id="ref-btn" onclick="loadNotes(true)" title="Refresh notes">
-        <svg width="13" height="13"><use href="#I-ref"/></svg>
-      </button>
+
+      <div id="admin-area">
+        <button class="btn btn-ghost btn-sm" onclick="openAdminLogin()" title="Admin login">
+          <svg width="13" height="13"><use href="#I-key"/></svg>
+        </button>
+      </div>
       <button class="btn btn-acc btn-sm" onclick="goPage('upload')">
         <svg width="14" height="14"><use href="#I-plus"/></svg>Upload
       </button>
@@ -122,11 +131,11 @@ header{position:sticky;top:0;z-index:100;background:rgba(13,12,29,.92);border-bo
 </header>
 
 <!-- BROWSE -->
-<div id="page-browse" class="page">
+<div id="page-browse" class="page active">
   <div class="inner">
     <div style="margin-bottom:28px">
       <h1 id="br-title" style="font-size:38px;margin-bottom:6px">All Study Notes</h1>
-      <p id="br-sub" style="color:var(--mut);font-size:15px">Loading notes…</p>
+      <p id="br-sub" style="color:var(--mut);font-size:15px">Have you pressed the refresh button ?</p>
     </div>
     <div class="filter-bar">
       <div class="sw">
@@ -235,7 +244,7 @@ header{position:sticky;top:0;z-index:100;background:rgba(13,12,29,.92);border-bo
     </div>
   </div>
 </div>
-</div><!-- #app -->
+</div>
 
 <!-- PROFILE MODAL -->
 <div class="overlay" id="m-profile" style="display:none">
@@ -255,103 +264,30 @@ header{position:sticky;top:0;z-index:100;background:rgba(13,12,29,.92);border-bo
   </div>
 </div>
 
-<!-- PREVIEW MODAL -->
-<div class="overlay" id="m-prev" style="display:none" onclick="if(event.target===this)closePrev()">
-  <div class="modal" style="max-width:980px;height:90vh;display:flex;flex-direction:column;overflow:hidden">
-    <div style="padding:14px 20px;border-bottom:1px solid var(--bdr);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;background:var(--card)">
-      <div style="min-width:0;flex:1">
-        <h3 id="pv-title" style="font-size:18px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-family:'Crimson Pro',serif"></h3>
-        <p id="pv-meta"  style="color:var(--mut);font-size:12px;margin-top:2px"></p>
-      </div>
-      <div style="display:flex;gap:8px;margin-left:16px;flex-shrink:0">
-        <button class="btn btn-ghost btn-sm" onclick="openSumFor(activeNote&&activeNote.id)">
-          <svg width="12" height="12"><use href="#I-star"/></svg>AI Summary
-        </button>
-        <button onclick="closePrev()" style="background:none;border:none;cursor:pointer;color:var(--mut);padding:6px;display:flex;align-items:center">
-          <svg width="20" height="20"><use href="#I-x"/></svg>
-        </button>
-      </div>
-    </div>
-    <div style="flex:1;overflow:hidden;background:#08080f;position:relative">
-      <div id="pv-load" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;gap:12px;color:var(--mut);font-size:15px">
-        <span class="spin">⟳</span> Fetching PDF…
-      </div>
-      <iframe id="pv-frame" style="width:100%;height:100%;border:none;display:none" title="PDF Preview"></iframe>
-      <div id="pv-err" style="position:absolute;inset:0;display:none;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:40px;gap:14px;color:var(--mut)">
-        <svg width="36" height="36" style="opacity:.4"><use href="#I-warn"/></svg>
-        <p id="pv-emsg" style="font-size:14px;max-width:400px;line-height:1.6"></p>
-        <a id="pv-direct" href="#" target="_blank" class="btn btn-ghost btn-sm" style="display:none">Open PDF in new tab ↗</a>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- SUMMARIZE MODAL -->
-<div class="overlay" id="m-sum" style="display:none" onclick="if(event.target===this)closeSum()">
-  <div class="modal fade-up" style="max-width:540px;padding:32px">
-    <button onclick="closeSum()" style="position:absolute;top:16px;right:16px;background:none;border:none;cursor:pointer;color:var(--mut)">
+<!-- ADMIN LOGIN MODAL -->
+<div class="overlay" id="m-admin" style="display:none" onclick="if(event.target===this)closeAdminLogin()">
+  <div class="modal fade-up" style="max-width:380px;padding:36px 32px">
+    <button onclick="closeAdminLogin()" style="position:absolute;top:16px;right:16px;background:none;border:none;cursor:pointer;color:var(--mut)">
       <svg width="18" height="18"><use href="#I-x"/></svg>
     </button>
-    <div id="sum-choose">
-      <div style="display:flex;gap:14px;align-items:flex-start;margin-bottom:24px">
-        <div style="width:42px;height:42px;background:rgba(244,162,97,.14);border:1px solid rgba(244,162,97,.28);border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0">
-          <svg width="18" height="18" style="color:var(--acc)"><use href="#I-star"/></svg>
-        </div>
-        <div>
-          <h2 style="font-size:22px;margin-bottom:3px">Summarize with AI</h2>
-          <p id="sum-notename" style="color:var(--mut);font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:320px"></p>
-        </div>
-      </div>
-      <div id="sum-err" style="display:none;margin-bottom:16px"></div>
-      <button class="btn btn-acc" onclick="runClaude()" style="width:100%;padding:14px;font-size:15px;margin-bottom:10px;justify-content:center">
-        <svg width="15" height="15"><use href="#I-star"/></svg>Summarize with Claude (in-app)
-      </button>
-      <p style="color:var(--mut);font-size:12px;text-align:center;margin-bottom:22px;line-height:1.6">Claude reads the PDF directly — no copy-paste needed.</p>
-      <hr style="border:none;border-top:1px solid var(--bdr);margin:0 0 18px"/>
-      <p style="color:var(--mut);font-size:12px;text-align:center;margin-bottom:12px">Or open another AI — upload the PDF there manually</p>
-      <div style="display:flex;gap:10px">
-        <a href="https://chatgpt.com" target="_blank" rel="noopener" style="flex:1;padding:12px 8px;background:var(--surf);border:1px solid var(--bdr);border-radius:10px;text-align:center;text-decoration:none;transition:border-color .2s" onmouseover="this.style.borderColor='var(--acc)'" onmouseout="this.style.borderColor='var(--bdr)'">
-          <div style="font-size:13px;font-weight:500;color:var(--txt);margin-bottom:2px">ChatGPT</div><div style="font-size:11px;color:var(--mut)">OpenAI</div>
-        </a>
-        <a href="https://gemini.google.com" target="_blank" rel="noopener" style="flex:1;padding:12px 8px;background:var(--surf);border:1px solid var(--bdr);border-radius:10px;text-align:center;text-decoration:none;transition:border-color .2s" onmouseover="this.style.borderColor='var(--acc)'" onmouseout="this.style.borderColor='var(--bdr)'">
-          <div style="font-size:13px;font-weight:500;color:var(--txt);margin-bottom:2px">Gemini</div><div style="font-size:11px;color:var(--mut)">Google</div>
-        </a>
-        <a href="https://perplexity.ai" target="_blank" rel="noopener" style="flex:1;padding:12px 8px;background:var(--surf);border:1px solid var(--bdr);border-radius:10px;text-align:center;text-decoration:none;transition:border-color .2s" onmouseover="this.style.borderColor='var(--acc)'" onmouseout="this.style.borderColor='var(--bdr)'">
-          <div style="font-size:13px;font-weight:500;color:var(--txt);margin-bottom:2px">Perplexity</div><div style="font-size:11px;color:var(--mut)">Research</div>
-        </a>
-      </div>
+    <div style="width:44px;height:44px;background:rgba(244,162,97,.14);border:1px solid rgba(244,162,97,.3);border-radius:10px;display:flex;align-items:center;justify-content:center;margin-bottom:18px">
+      <svg width="18" height="18" style="color:var(--acc)"><use href="#I-key"/></svg>
     </div>
-    <div id="sum-loading" style="display:none;text-align:center;padding:48px 0">
-      <div style="width:52px;height:52px;background:rgba(244,162,97,.14);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 18px">
-        <span class="spin" style="font-size:24px;color:var(--acc)">⟳</span>
-      </div>
-      <h3 style="margin-bottom:8px;font-size:20px">Generating…</h3>
-      <p style="color:var(--mut);font-size:14px">Claude is reading your PDF</p>
-    </div>
-    <div id="sum-result" style="display:none">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px">
-        <h2 style="font-size:22px">Summary</h2>
-        <button class="btn btn-ghost btn-sm" onclick="showSumChoose()">Try again</button>
-      </div>
-      <div id="sum-txt" class="scrolly" style="background:var(--surf);border:1px solid var(--bdr);border-radius:12px;padding:20px;max-height:380px;font-size:14px;line-height:1.8;white-space:pre-wrap;color:var(--txt)"></div>
-      <button class="btn btn-ghost" id="copy-btn" onclick="copySummary()" style="width:100%;margin-top:14px;justify-content:center">
-        <svg width="13" height="13"><use href="#I-copy"/></svg>Copy Summary
-      </button>
-    </div>
+    <h2 style="font-size:24px;margin-bottom:6px">Why are you here go study !!!</h2>
+    <p style="color:var(--mut);font-size:13px;margin-bottom:24px;line-height:1.6"></p>
+    <input type="password" id="admin-pw" placeholder="Enter password…" onkeydown="if(event.key==='Enter')checkAdmin()"/>
+    <p id="admin-err" style="display:none;color:var(--red);font-size:13px;margin-top:10px">Wrong password. Try again.</p>
+    <button class="btn btn-acc" onclick="checkAdmin()" style="width:100%;margin-top:18px;justify-content:center">
+      Unlock Admin Access
+    </button>
   </div>
 </div>
 
 <script>
-/* ═══════════════════════════════════════════════════════
-   CONFIG — safe to be public, no secret tokens needed
-   ═══════════════════════════════════════════════════════
-   Firebase Realtime Database in test mode allows open
-   read/write via REST — the URL is the only thing needed.
-   Discord webhook is write-only — no risk exposing it.
-   ═══════════════════════════════════════════════════════ */
-const FB   = 'https://sab-notes-f87e3-default-rtdb.asia-southeast1.firebasedatabase.app';
-const WH   = 'https://discord.com/api/webhooks/1491774008184537108/9CGbkKA88b8tG61tQOMC2V1s0T_Cqbn6hzeGzO9IihvF_LWAnqRK5M6byoLPLHto7XPX';
-const MAX  = 25 * 1024 * 1024; // 25 MB
+
+const FB         = 'https://sab-notes-f87e3-default-rtdb.asia-southeast1.firebasedatabase.app';
+const WH         = 'https://discord.com/api/webhooks/1491774008184537108/9CGbkKA88b8tG61tQOMC2V1s0T_Cqbn6hzeGzO9IihvF_LWAnqRK5M6byoLPLHto7XPX';const k= 'sudanisthebesthomeministerEVER';
+const MAX        = 25 * 1024 * 1024;
 
 const FACULTIES = [
   'Architecture','Civil Engineering','Computer Engineering','Electrical Engineering',
@@ -359,85 +295,107 @@ const FACULTIES = [
   'Education (BEd)','Law (LLB)','Pharmacy','IT / Computing','Other'
 ];
 
-/* ── Firebase REST helpers ──────────────────────────────
-   GET  /notes.json          → returns object {id: note} or null
-   PUT  /notes/{id}.json     → writes one note (atomic, no race)
-   DELETE /notes/{id}.json   → removes one note
-   No auth header needed while DB rules are in test mode.
-   ────────────────────────────────────────────────────── */
+/* ── state ── */
+let notes=[], profile=JSON.parse(localStorage.getItem('sn_profile')||'null');
+let isAdmin = sessionStorage.getItem('sn_admin')==='1'; // survives page refresh in same tab
+let selFile=null;
+
+const $    = id => document.getElementById(id);
+const uid  = ()  => Date.now().toString(36)+Math.random().toString(36).slice(2);
+const fmtB = b   => b<1048576?(b/1024).toFixed(1)+' KB':(b/1048576).toFixed(2)+' MB';
+const fmtD = d   => new Date(d).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+
+/* ════════════════════════════════════════════════════
+   FIREBASE REST  (test mode — no auth token needed)
+   GET  /notes.json  → all notes as object
+   PUT  /notes/{id}.json → write single note
+   DELETE /notes/{id}.json → delete single note
+   ════════════════════════════════════════════════════ */
 async function dbReadAll(){
   try {
-    const r = await fetch(`${FB}/notes.json`);
+    const r=await fetch(`${FB}/notes.json`);
     if(!r.ok) throw new Error(`HTTP ${r.status}`);
-    const data = await r.json();
+    const data=await r.json();
     if(!data) return [];
-    // Firebase stores as object {key: note} — convert to sorted array
-    return Object.values(data).sort((a,b)=> new Date(b.uploadedAt)-new Date(a.uploadedAt));
-  } catch(e) {
-    console.error('dbReadAll:', e);
-    return null;
+    return Object.values(data).sort((a,b)=>new Date(b.uploadedAt)-new Date(a.uploadedAt));
+  } catch(e){ console.error('dbRead:',e); return null; }
+}
+
+async function dbAdd(note){
+  const r=await fetch(`${FB}/notes/${note.id}.json`,{
+    method:'PUT', headers:{'Content-Type':'application/json'},
+    body:JSON.stringify(note)
+  });
+  if(!r.ok) throw new Error(`Firebase write failed HTTP ${r.status}`);
+}
+
+async function dbDel(id){
+  const r=await fetch(`${FB}/notes/${id}.json`,{method:'DELETE'});
+  if(!r.ok) throw new Error(`Firebase delete failed HTTP ${r.status}`);
+}
+
+
+
+
+
+function openAdminLogin(){
+  if(isAdmin){ adminLogout(); return; }
+  $('admin-pw').value=''; $('admin-err').style.display='none';
+  $('m-admin').style.display='flex';
+  setTimeout(()=>$('admin-pw').focus(),100);
+}
+function closeAdminLogin(){ $('m-admin').style.display='none'; }
+
+function checkAdmin(){
+  const pw=$('admin-pw').value;
+
+  //Love your efforts pls dont delete everything by being admin love you 
+
+  if(pw===k){
+    isAdmin=true; sessionStorage.setItem('sn_admin','1');
+    closeAdminLogin(); updateAdminArea(); renderGrid();
+  } else {
+    $('admin-err').style.display='block';
+    $('admin-pw').value=''; $('admin-pw').focus();
   }
 }
 
-async function dbAddNote(note){
-  // Use note.id as the Firebase key so it's idempotent
-  const r = await fetch(`${FB}/notes/${note.id}.json`, {
-    method: 'PUT',
-    headers: {'Content-Type':'application/json'},
-    body: JSON.stringify(note)
-  });
-  if(!r.ok) throw new Error(`Firebase write failed: HTTP ${r.status}`);
+function adminLogout(){
+  isAdmin=false; sessionStorage.removeItem('sn_admin');
+  updateAdminArea(); renderGrid();
 }
 
-async function dbDeleteNote(id){
-  await fetch(`${FB}/notes/${id}.json`, { method:'DELETE' });
+function updateAdminArea(){
+  const area=$('admin-area');
+  if(isAdmin){
+    area.innerHTML=`<div style="display:flex;align-items:center;gap:8px">
+      <span class="admin-badge">
+        <svg width="11" height="11"><use href="#I-key"/></svg>Admin
+      </span>
+      <button class="btn btn-ghost btn-sm" onclick="adminLogout()" title="Log out">
+        <svg width="13" height="13"><use href="#I-out"/></svg>
+      </button>
+    </div>`;
+  } else {
+    area.innerHTML=`<button class="btn btn-ghost btn-sm" onclick="openAdminLogin()" title="Admin login">
+      <svg width="13" height="13"><use href="#I-key"/></svg>
+    </button>`;
+  }
 }
 
-/* ── app state ── */
-let notes = [], profile = JSON.parse(localStorage.getItem('sn_profile')||'null');
-let selFile = null, activeNote = null, _blobUrl = null;
-
-const $    = id => document.getElementById(id);
-const uid  = () => Date.now().toString(36) + Math.random().toString(36).slice(2);
-const fmtB = b  => b < 1048576 ? (b/1024).toFixed(1)+' KB' : (b/1048576).toFixed(2)+' MB';
-const fmtD = d  => new Date(d).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
-
-/* ══════════════════════════════════════════
+/* ════════════════════════════════════════════════════
    BOOT
-   ══════════════════════════════════════════ */
+   ════════════════════════════════════════════════════ */
 (async function boot(){
-  FACULTIES.forEach(f=>{
-    const o=document.createElement('option');
-    o.value=o.textContent=f;
-    $('ff').appendChild(o);
-  });
-  if(profile){ updateChip(); applyPF(); }
-  else openProfile();
-  goPage('browse');
+  FACULTIES.forEach(f=>{ const o=document.createElement('option'); o.value=o.textContent=f; $('ff').appendChild(o); });
+  updateAdminArea();
+  if(profile){ updateChip(); applyPF(); } else openProfile();
   await loadNotes(false);
 })();
 
-async function loadNotes(spin){
-  if(spin) $('ref-btn').innerHTML='<span class="spin" style="font-size:13px;color:var(--mut)">⟳</span>';
-  showSkels();
-  const data = await dbReadAll();
-  if(data === null){
-    $('br-sub').innerHTML='<span style="color:var(--red)">Could not reach database — check internet and try refreshing.</span>';
-  } else {
-    notes = data;
-  }
-  renderGrid();
-  if(spin) setTimeout(()=>{ $('ref-btn').innerHTML='<svg width="13" height="13"><use href="#I-ref"/></svg>'; },400);
-}
-
-function showSkels(){
-  const g=$('grid'); g.innerHTML='';
-  for(let i=0;i<6;i++) g.innerHTML+=`<div class="skel"><div style="display:flex;gap:12px;margin-bottom:16px"><div style="width:46px;height:54px;background:var(--bdr);border-radius:9px;flex-shrink:0"></div><div style="flex:1"><div class="sl" style="width:65%"></div><div class="sl" style="width:40%"></div></div></div><div style="display:flex;gap:6px;margin-bottom:16px"><div class="sl" style="width:60px;height:22px;border-radius:20px;margin:0"></div><div class="sl" style="width:55px;height:22px;border-radius:20px;margin:0"></div></div><div style="border-top:1px solid var(--bdr);padding-top:14px;display:flex;justify-content:space-between"><div class="sl" style="width:90px;height:10px;margin:0"></div><div class="sl" style="width:80px;height:28px;border-radius:8px;margin:0"></div></div></div>`;
-}
-
-/* ══════════════════════════════════════════
+/* ════════════════════════════════════════════════════
    ROUTING
-   ══════════════════════════════════════════ */
+   ════════════════════════════════════════════════════ */
 function goPage(name){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   $('page-'+name).classList.add('active');
@@ -446,9 +404,30 @@ function goPage(name){
   window.scrollTo(0,0);
 }
 
-/* ══════════════════════════════════════════
+/* ════════════════════════════════════════════════════
+   NOTES  LOAD
+   ════════════════════════════════════════════════════ */
+async function loadNotes(spin){
+  if(spin) $('ref-btn').innerHTML='<span class="spin" style="font-size:13px;color:var(--mut)">⟳</span>';
+  showSkels();
+  const data=await dbReadAll();
+  if(data===null){
+    $('br-sub').innerHTML='<span style="color:var(--red)">Could not reach database. Check internet and try refreshing.</span>';
+    $('grid').innerHTML='';
+  } else {
+    notes=data; renderGrid();
+  }
+  if(spin) setTimeout(()=>{ $('ref-btn').innerHTML='<svg width="13" height="13"><use href="#I-ref"/></svg>'; },400);
+}
+
+function showSkels(){
+  $('grid').innerHTML='';
+  for(let i=0;i<6;i++) $('grid').innerHTML+=`<div class="skel"><div style="display:flex;gap:12px;margin-bottom:16px"><div style="width:46px;height:54px;background:var(--bdr);border-radius:9px;flex-shrink:0"></div><div style="flex:1"><div class="sl" style="width:65%"></div><div class="sl" style="width:40%"></div></div></div><div style="display:flex;gap:6px;margin-bottom:16px"><div class="sl" style="width:60px;height:22px;border-radius:20px;margin:0"></div><div class="sl" style="width:55px;height:22px;border-radius:20px;margin:0"></div></div><div style="border-top:1px solid var(--bdr);padding-top:14px;display:flex;justify-content:space-between"><div class="sl" style="width:90px;height:10px;margin:0"></div><div class="sl" style="width:80px;height:28px;border-radius:8px;margin:0"></div></div></div>`;
+}
+
+/* ════════════════════════════════════════════════════
    PROFILE
-   ══════════════════════════════════════════ */
+   ════════════════════════════════════════════════════ */
 const PSTEPS=[
   {q:"What's your program?",    k:'faculty',  t:'sel', opts:FACULTIES, lb:'Faculty'},
   {q:"What year are you in?",   k:'year',     t:'sel', opts:['1st Year','2nd Year','3rd Year','4th Year','5th Year'], lb:'Year'},
@@ -459,8 +438,7 @@ let ps=0, pd={faculty:'',year:'',semester:'',college:''};
 
 function openProfile(){
   pd=profile?{...profile}:{faculty:'',year:'',semester:'',college:''};
-  ps=0;
-  $('m-pclose').style.display=profile?'block':'none';
+  ps=0; $('m-pclose').style.display=profile?'block':'none';
   $('m-pfooter').style.display=profile?'none':'block';
   renderPS(); $('m-profile').style.display='flex';
 }
@@ -475,8 +453,7 @@ function applyPF(){
   $('ff').value=profile.faculty; $('fy').value=profile.year; $('fm').value=profile.semester;
 }
 function renderPS(){
-  const s=PSTEPS[ps];
-  const bar=$('m-pbar'); bar.innerHTML='';
+  const s=PSTEPS[ps]; const bar=$('m-pbar'); bar.innerHTML='';
   PSTEPS.forEach((_,i)=>{ const d=document.createElement('div'); d.style.cssText=`flex:1;height:3px;border-radius:3px;background:${i<=ps?'var(--acc)':'var(--bdr)'};transition:background .25s`; bar.appendChild(d); });
   $('m-psteplbl').textContent=`Step ${ps+1} of ${PSTEPS.length}`;
   $('m-ptitle').textContent=s.q;
@@ -496,16 +473,15 @@ function renderPS(){
 }
 function pNext(){
   const s=PSTEPS[ps]; const v=document.getElementById('pf-field').value.trim();
-  if(s.t==='sel'&&!v) return;
-  pd[s.k]=v;
+  if(s.t==='sel'&&!v) return; pd[s.k]=v;
   if(ps<PSTEPS.length-1){ ps++; renderPS(); }
   else { profile=pd; localStorage.setItem('sn_profile',JSON.stringify(profile)); updateChip(); applyPF(); closeProfile(); renderGrid(); }
 }
 function pBack(){ if(ps>0){ ps--; renderPS(); } }
 
-/* ══════════════════════════════════════════
+/* ════════════════════════════════════════════════════
    BROWSE & FILTER
-   ══════════════════════════════════════════ */
+   ════════════════════════════════════════════════════ */
 function clearF(){ $('fs').value=''; $('ff').value=''; $('fy').value=''; $('fm').value=''; renderGrid(); }
 
 function renderGrid(){
@@ -513,14 +489,18 @@ function renderGrid(){
   const fac=$('ff').value, yr=$('fy').value, sem=$('fm').value;
   const hasF=q||fac||yr||sem;
   const list=notes.filter(n=>{
-    if(fac && n.faculty!==fac) return false;
-    if(yr  && n.year!==yr)     return false;
-    if(sem && n.semester!==sem) return false;
-    if(q && !n.title.toLowerCase().includes(q) && !(n.subject||'').toLowerCase().includes(q)) return false;
+    if(fac&&n.faculty!==fac) return false;
+    if(yr &&n.year!==yr)     return false;
+    if(sem&&n.semester!==sem) return false;
+    if(q&&!n.title.toLowerCase().includes(q)&&!(n.subject||'').toLowerCase().includes(q)) return false;
     return true;
   });
   $('br-title').textContent=fac||(profile?.faculty)||'All Study Notes';
-  $('br-sub').innerHTML=`Showing <strong style="color:var(--acc)">${list.length}</strong> of ${notes.length} notes`+(profile?` · ${profile.year} · ${profile.semester}`:'');
+  if(notes.length===0){
+    $('br-sub').innerHTML='Have you pressed the refresh button ?';
+  } else {
+    $('br-sub').innerHTML=`Showing <strong style="color:var(--acc)">${list.length}</strong> of ${notes.length} notes`+(profile?` · ${profile.year} · ${profile.semester}`:'');
+  }
   $('clr-btn').style.display=hasF?'inline-flex':'none';
   const pills=$('pills'); pills.innerHTML='';
   const mkP=(label,clr)=>{ const s=document.createElement('span'); s.className='pill'; s.innerHTML=`${label}<button onclick="${clr}"><svg width="11" height="11"><use href="#I-x"/></svg></button>`; pills.appendChild(s); };
@@ -529,8 +509,8 @@ function renderGrid(){
   if(sem) mkP(sem,`$('fm').value='';renderGrid()`);
   if(q)   mkP(`"${q}"`,`$('fs').value='';renderGrid()`);
   const g=$('grid'); g.innerHTML='';
-  if(!list.length){
-    g.innerHTML=`<div style="grid-column:1/-1;text-align:center;padding:80px 24px"><div style="width:64px;height:64px;background:rgba(244,162,97,.08);border:1px solid rgba(244,162,97,.15);border-radius:16px;display:flex;align-items:center;justify-content:center;margin:0 auto 20px"><svg width="28" height="28" style="color:var(--acc);opacity:.6"><use href="#I-file"/></svg></div><h3 style="font-size:22px;margin-bottom:8px">No notes found</h3><p style="color:var(--mut);font-size:14px;margin-bottom:28px;max-width:340px;margin-left:auto;margin-right:auto">${notes.length===0?'Be the first to share a note!':'Try adjusting or clearing your filters.'}</p><div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">${hasF?`<button class="btn btn-ghost" onclick="clearF()"><svg width="14" height="14"><use href="#I-x"/></svg>Clear Filters</button>`:''}<button class="btn btn-acc" onclick="goPage('upload')"><svg width="14" height="14"><use href="#I-plus"/></svg>Upload a Note</button></div></div>`;
+  if(!list.length&&notes.length>0){
+    g.innerHTML=`<div style="grid-column:1/-1;text-align:center;padding:80px 24px"><div style="width:64px;height:64px;background:rgba(244,162,97,.08);border:1px solid rgba(244,162,97,.15);border-radius:16px;display:flex;align-items:center;justify-content:center;margin:0 auto 20px"><svg width="28" height="28" style="color:var(--acc);opacity:.6"><use href="#I-file"/></svg></div><h3 style="font-size:22px;margin-bottom:8px">No notes match your filters</h3><p style="color:var(--mut);font-size:14px;margin-bottom:28px">Try adjusting or clearing your filters.</p><button class="btn btn-ghost" onclick="clearF()"><svg width="14" height="14"><use href="#I-x"/></svg>Clear Filters</button></div>`;
     return;
   }
   list.forEach((n,i)=>g.appendChild(mkCard(n,i)));
@@ -539,31 +519,62 @@ function renderGrid(){
 function mkCard(n,i){
   const d=document.createElement('div');
   d.className='card fade-up'; d.style.animationDelay=`${i*35}ms`;
-  d.innerHTML=`<div style="display:flex;gap:14px;margin-bottom:14px"><div style="width:46px;height:54px;background:rgba(244,162,97,.1);border:1px solid rgba(244,162,97,.18);border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="20" height="20" style="color:var(--acc)"><use href="#I-file"/></svg></div><div style="flex:1;min-width:0"><h3 style="font-size:15px;font-weight:600;color:var(--txt);margin-bottom:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-family:'Crimson Pro',serif">${n.title}</h3><p style="color:var(--mut);font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${n.subject||'—'}</p></div></div><div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:16px"><span class="tag">${n.faculty}</span><span class="tag">${n.year}</span><span class="tag">${n.semester}</span>${n.college?`<span class="tag" style="max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${n.college}</span>`:''}</div><div style="display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--bdr);padding-top:14px"><span style="color:var(--mut);font-size:11px">${fmtD(n.uploadedAt)} · ${fmtB(n.fileSize)}</span><div id="ac-${n.id}" style="display:flex;gap:6px"><button class="btn btn-ghost btn-sm" onclick="confirmDel('${n.id}')" title="Delete"><svg width="12" height="12"><use href="#I-trash"/></svg></button><button class="btn btn-ghost btn-sm" onclick="openSumFor('${n.id}')"><svg width="12" height="12"><use href="#I-star"/></svg>AI</button><button class="btn btn-acc btn-sm" onclick="openPrev('${n.id}')"><svg width="12" height="12"><use href="#I-eye"/></svg>View</button></div></div>`;
+  const delBtn=isAdmin
+    ?`<button class="btn btn-danger btn-sm" id="del-${n.id}" onclick="confirmDel('${n.id}')" title="Delete"><svg width="12" height="12"><use href="#I-trash"/></svg></button>`
+    :'';
+  d.innerHTML=`
+    <div style="display:flex;gap:14px;margin-bottom:14px">
+      <div style="width:46px;height:54px;background:rgba(244,162,97,.1);border:1px solid rgba(244,162,97,.18);border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+        <svg width="20" height="20" style="color:var(--acc)"><use href="#I-file"/></svg>
+      </div>
+      <div style="flex:1;min-width:0">
+        <h3 style="font-size:15px;font-weight:600;color:var(--txt);margin-bottom:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-family:'Crimson Pro',serif">${n.title}</h3>
+        <p style="color:var(--mut);font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${n.subject||'—'}</p>
+      </div>
+    </div>
+    <div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:16px">
+      <span class="tag">${n.faculty}</span>
+      <span class="tag">${n.year}</span>
+      <span class="tag">${n.semester}</span>
+      ${n.college?`<span class="tag" style="max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${n.college}</span>`:''}
+    </div>
+    <div style="display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--bdr);padding-top:14px">
+      <span style="color:var(--mut);font-size:11px">${fmtD(n.uploadedAt)} · ${fmtB(n.fileSize)}</span>
+      <div id="ac-${n.id}" style="display:flex;gap:6px;align-items:center">
+        ${delBtn}
+        <a href="${n.cdnUrl||'#'}" target="_blank" rel="noopener"
+           class="btn btn-acc btn-sm"
+           ${!n.cdnUrl?'style="opacity:.45;pointer-events:none"':''}
+           onclick="this.href&&this.href!=='#'||event.preventDefault()">
+          <svg width="12" height="12"><use href="#I-ext"/></svg>View PDF
+        </a>
+      </div>
+    </div>`;
   return d;
 }
 
 function confirmDel(id){
-  const el=$('ac-'+id); if(!el) return;
-  el.innerHTML=`<button class="btn btn-danger btn-sm" onclick="delNote('${id}')">Confirm</button><button class="btn btn-ghost btn-sm" onclick="renderGrid()">Cancel</button>`;
+  const ac=$('ac-'+id); if(!ac) return;
+  ac.innerHTML=`
+    <span style="font-size:12px;color:var(--mut);margin-right:2px">Delete?</span>
+    <button class="btn btn-danger btn-sm" onclick="delNote('${id}')">Yes</button>
+    <button class="btn btn-ghost btn-sm" onclick="renderGrid()">No</button>`;
 }
 async function delNote(id){
-  await dbDeleteNote(id);
-  notes=notes.filter(n=>n.id!==id);
-  renderGrid();
+  if(!isAdmin){ alert('Admin access required.'); return; }
+  try { await dbDel(id); notes=notes.filter(n=>n.id!==id); renderGrid(); }
+  catch(e){ alert('Delete failed: '+e.message); }
 }
 
-/* ══════════════════════════════════════════
+/* ════════════════════════════════════════════════════
    UPLOAD
-   ══════════════════════════════════════════ */
+   ════════════════════════════════════════════════════ */
 function resetForm(){
   selFile=null;
   $('dz-idle').style.display='block'; $('dz-ok').style.display='none';
   $('fi').value='';
   ['u-title','u-sub','u-col'].forEach(id=>$(id).value='');
-  $('u-fac').value=profile?.faculty||'';
-  $('u-yr').value=profile?.year||'';
-  $('u-sem').value=profile?.semester||'';
+  $('u-fac').value=profile?.faculty||''; $('u-yr').value=profile?.year||''; $('u-sem').value=profile?.semester||'';
   $('up-prog').style.display='none'; $('up-err').style.display='none';
   $('sub-btn').disabled=false; $('can-btn').disabled=false;
   $('sub-btn').innerHTML='<svg width="14" height="14"><use href="#I-up"/></svg>Upload Note';
@@ -572,10 +583,8 @@ function onDrop(e){ e.preventDefault(); $('dz').classList.remove('drag'); onFile
 function onFile(f){
   if(!f) return;
   if(f.type!=='application/pdf'&&!f.name.toLowerCase().endsWith('.pdf')){ showUE('Only PDF files are accepted.'); return; }
-  selFile=f;
-  $('dz-idle').style.display='none'; $('dz-ok').style.display='block';
-  $('dz-name').textContent=f.name;
-  $('dz-sz').textContent=`${fmtB(f.size)} · Click or drag to change`;
+  selFile=f; $('dz-idle').style.display='none'; $('dz-ok').style.display='block';
+  $('dz-name').textContent=f.name; $('dz-sz').textContent=`${fmtB(f.size)} · Click or drag to change`;
   $('up-err').style.display='none';
 }
 function setP(pct,lbl,col='var(--acc)'){
@@ -583,20 +592,14 @@ function setP(pct,lbl,col='var(--acc)'){
   $('up-lbl').textContent=lbl; $('up-pct').textContent=pct+'%';
   $('pf').style.width=pct+'%'; $('pf').style.background=col;
 }
-function showUE(msg){
-  $('up-err').style.display='block';
-  $('up-err').innerHTML=`<div class="err-box"><svg width="15" height="15" style="flex-shrink:0;margin-top:1px"><use href="#I-warn"/></svg><span>${msg}</span></div>`;
-}
+function showUE(msg){ $('up-err').style.display='block'; $('up-err').innerHTML=`<div class="err-box"><svg width="15" height="15" style="flex-shrink:0;margin-top:1px"><use href="#I-warn"/></svg><span>${msg}</span></div>`; }
 
-/* canvas PDF compression for files > 25MB */
 async function compressPDF(file){
   if(!window.pdfjsLib){
     await new Promise((res,rej)=>{ const s=document.createElement('script'); s.src='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js'; s.onload=res; s.onerror=rej; document.head.appendChild(s); });
     window.pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
   }
-  if(!window.PDFLib){
-    await new Promise((res,rej)=>{ const s=document.createElement('script'); s.src='https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js'; s.onload=res; s.onerror=rej; document.head.appendChild(s); });
-  }
+  if(!window.PDFLib){ await new Promise((res,rej)=>{ const s=document.createElement('script'); s.src='https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js'; s.onload=res; s.onerror=rej; document.head.appendChild(s); }); }
   const buf=await file.arrayBuffer();
   const srcPdf=await pdfjsLib.getDocument({data:buf}).promise;
   const newPdf=await PDFLib.PDFDocument.create();
@@ -604,17 +607,14 @@ async function compressPDF(file){
     setP(20+Math.round((i/srcPdf.numPages)*50),`Compressing page ${i} of ${srcPdf.numPages}…`);
     const page=await srcPdf.getPage(i);
     const vp=page.getViewport({scale:0.72});
-    const canvas=document.createElement('canvas');
-    canvas.width=vp.width; canvas.height=vp.height;
+    const canvas=document.createElement('canvas'); canvas.width=vp.width; canvas.height=vp.height;
     await page.render({canvasContext:canvas.getContext('2d'),viewport:vp}).promise;
     const jpeg=canvas.toDataURL('image/jpeg',0.78);
     const imgBytes=Uint8Array.from(atob(jpeg.split(',')[1]),c=>c.charCodeAt(0));
     const embImg=await newPdf.embedJpg(imgBytes);
-    const p=newPdf.addPage([vp.width,vp.height]);
-    p.drawImage(embImg,{x:0,y:0,width:vp.width,height:vp.height});
+    const p=newPdf.addPage([vp.width,vp.height]); p.drawImage(embImg,{x:0,y:0,width:vp.width,height:vp.height});
   }
-  const bytes=await newPdf.save();
-  return new File([bytes],file.name,{type:'application/pdf'});
+  return new File([await newPdf.save()],file.name,{type:'application/pdf'});
 }
 
 async function doUpload(){
@@ -624,173 +624,43 @@ async function doUpload(){
   if(!$('u-fac').value)         { showUE('Please select a faculty / program.'); return; }
   if(!$('u-yr').value)          { showUE('Please select a year.'); return; }
   if(!$('u-sem').value)         { showUE('Please select a semester / part.'); return; }
-
-  $('up-err').style.display='none';
-  $('sub-btn').disabled=true; $('can-btn').disabled=true;
+  $('up-err').style.display='none'; $('sub-btn').disabled=true; $('can-btn').disabled=true;
   $('sub-btn').innerHTML='<span class="spin">⟳</span> Working…';
-
   let fileToSend=selFile;
-
-  if(selFile.size > MAX){
-    if(selFile.size > 100*1024*1024){
+  if(selFile.size>MAX){
+    if(selFile.size>100*1024*1024){
       $('sub-btn').disabled=false; $('can-btn').disabled=false;
       $('sub-btn').innerHTML='<svg width="14" height="14"><use href="#I-up"/></svg>Upload Note';
-      showUE(`File is ${fmtB(selFile.size)} — too large to compress here. Please use <a href="https://smallpdf.com/compress-pdf" target="_blank" style="color:var(--acc)">Smallpdf</a> first.`);
-      return;
+      showUE(`File is ${fmtB(selFile.size)} — too large. Compress at <a href="https://smallpdf.com/compress-pdf" target="_blank" style="color:var(--acc)">Smallpdf</a> first.`); return;
     }
     setP(10,'Compressing PDF…');
     try {
       fileToSend=await compressPDF(selFile);
-      if(fileToSend.size>MAX){
-        $('sub-btn').disabled=false; $('can-btn').disabled=false;
-        $('sub-btn').innerHTML='<svg width="14" height="14"><use href="#I-up"/></svg>Upload Note';
-        showUE(`Still ${fmtB(fileToSend.size)} after compression. Please use <a href="https://smallpdf.com/compress-pdf" target="_blank" style="color:var(--acc)">Smallpdf</a> to reduce it further.`);
-        return;
-      }
-    } catch(e){
-      $('sub-btn').disabled=false; $('can-btn').disabled=false;
-      $('sub-btn').innerHTML='<svg width="14" height="14"><use href="#I-up"/></svg>Upload Note';
-      showUE('Compression failed: '+e.message); return;
-    }
+      if(fileToSend.size>MAX){ $('sub-btn').disabled=false; $('can-btn').disabled=false; $('sub-btn').innerHTML='<svg width="14" height="14"><use href="#I-up"/></svg>Upload Note'; showUE(`Still ${fmtB(fileToSend.size)} after compression. Use <a href="https://smallpdf.com/compress-pdf" target="_blank" style="color:var(--acc)">Smallpdf</a> to reduce further.`); return; }
+    } catch(e){ $('sub-btn').disabled=false; $('can-btn').disabled=false; $('sub-btn').innerHTML='<svg width="14" height="14"><use href="#I-up"/></svg>Upload Note'; showUE('Compression failed: '+e.message); return; }
   }
-
-  const note={
-    id: uid(),
-    title:    $('u-title').value.trim(),
-    subject:  $('u-sub').value.trim(),
-    faculty:  $('u-fac').value,
-    year:     $('u-yr').value,
-    semester: $('u-sem').value,
-    college:  $('u-col').value.trim(),
-    fileName: fileToSend.name,
-    fileSize: selFile.size,
-    uploadedAt: new Date().toISOString(),
-    cdnUrl: null
-  };
-
+  const note={ id:uid(), title:$('u-title').value.trim(), subject:$('u-sub').value.trim(), faculty:$('u-fac').value, year:$('u-yr').value, semester:$('u-sem').value, college:$('u-col').value.trim(), fileName:fileToSend.name, fileSize:selFile.size, uploadedAt:new Date().toISOString(), cdnUrl:null };
   setP(75,'Uploading to Discord…');
-
   try {
-    /* 1 — Upload PDF to Discord, get back public CDN URL */
     const fd=new FormData();
-    fd.append('payload_json', JSON.stringify({
-      content:`📄 **${note.subject}** · ${note.faculty}\n📅 ${note.year} · ${note.semester}${note.college?' · '+note.college:''}\n🆔 \`${note.id}\``
-    }));
-    fd.append('file', fileToSend, note.fileName);
-
+    fd.append('payload_json',JSON.stringify({ content:`📄 **${note.subject}** · ${note.faculty}\n📅 ${note.year} · ${note.semester}${note.college?' · '+note.college:''}\n🆔 \`${note.id}\`` }));
+    fd.append('file',fileToSend,note.fileName);
     const dRes=await fetch(WH+'?wait=true',{method:'POST',body:fd});
     if(!dRes.ok){ const t=await dRes.text(); throw new Error(`Discord ${dRes.status}: ${t.slice(0,120)}`); }
     const dMsg=await dRes.json();
     const cdnUrl=dMsg?.attachments?.[0]?.url;
     if(!cdnUrl) throw new Error('Discord did not return a file URL. File may still be over 25 MB.');
     note.cdnUrl=cdnUrl;
-
-    /* 2 — Write note to Firebase (visible to ALL users instantly) */
     setP(90,'Saving to database…');
-    await dbAddNote(note);
-    notes.unshift(note);
-
+    await dbAdd(note); notes.unshift(note);
     setP(100,'Done!','var(--grn)');
     $('sub-btn').innerHTML='<svg width="14" height="14"><use href="#I-ok"/></svg> Uploaded!';
     setTimeout(()=>goPage('browse'),1300);
-
   } catch(e){
     $('sub-btn').disabled=false; $('can-btn').disabled=false;
     $('sub-btn').innerHTML='<svg width="14" height="14"><use href="#I-up"/></svg>Retry';
-    $('up-prog').style.display='none';
-    showUE(e.message||'Upload failed — please try again.');
+    $('up-prog').style.display='none'; showUE(e.message||'Upload failed — please try again.');
   }
-}
-
-/* ══════════════════════════════════════════
-   PREVIEW — fetch as blob to bypass Discord
-   CDN's X-Frame-Options iframe block
-   ══════════════════════════════════════════ */
-function openPrev(id){
-  activeNote=notes.find(n=>n.id===id); if(!activeNote) return;
-  $('pv-title').textContent=activeNote.title;
-  $('pv-meta').textContent=`${activeNote.faculty} · ${activeNote.year} · ${activeNote.semester}${activeNote.college?' · '+activeNote.college:''}`;
-  $('pv-load').style.display='flex';
-  $('pv-frame').style.display='none';
-  $('pv-err').style.display='none';
-  $('m-prev').style.display='flex';
-  if(_blobUrl){ URL.revokeObjectURL(_blobUrl); _blobUrl=null; }
-  if(!activeNote.cdnUrl){ showPE('No file URL for this note. Delete and re-upload it.'); return; }
-  fetch(activeNote.cdnUrl)
-    .then(r=>{ if(!r.ok) throw new Error(`HTTP ${r.status}`); return r.blob(); })
-    .then(blob=>{
-      if(!blob.size) throw new Error('Empty response — link may have expired.');
-      _blobUrl=URL.createObjectURL(blob);
-      const fr=$('pv-frame');
-      fr.onload=()=>{ $('pv-load').style.display='none'; fr.style.display='block'; };
-      fr.src=_blobUrl;
-    })
-    .catch(e=>showPE(`Could not load PDF: ${e.message}`, activeNote.cdnUrl));
-}
-function showPE(msg,directUrl){
-  $('pv-load').style.display='none';
-  const el=$('pv-err'); el.style.display='flex';
-  $('pv-emsg').textContent=msg;
-  const lnk=$('pv-direct');
-  if(directUrl){ lnk.href=directUrl; lnk.style.display='inline-flex'; } else lnk.style.display='none';
-}
-function closePrev(){
-  $('m-prev').style.display='none';
-  $('pv-frame').src='about:blank';
-  if(_blobUrl){ URL.revokeObjectURL(_blobUrl); _blobUrl=null; }
-}
-
-/* ══════════════════════════════════════════
-   SUMMARIZE
-   ══════════════════════════════════════════ */
-function openSumFor(id){
-  if(!id) return;
-  activeNote=notes.find(n=>n.id===id); if(!activeNote) return;
-  $('sum-notename').textContent=activeNote.title;
-  $('sum-err').style.display='none';
-  showSumChoose(); $('m-sum').style.display='flex';
-}
-function closeSum(){ $('m-sum').style.display='none'; }
-function showSumChoose(){ $('sum-choose').style.display='block'; $('sum-loading').style.display='none'; $('sum-result').style.display='none'; }
-
-async function runClaude(){
-  if(!activeNote?.cdnUrl){
-    $('sum-err').style.display='block';
-    $('sum-err').innerHTML=`<div class="err-box"><svg width="14" height="14"><use href="#I-warn"/></svg>No file URL — re-upload the note first.</div>`;
-    return;
-  }
-  $('sum-choose').style.display='none'; $('sum-loading').style.display='block';
-  try {
-    const r=await fetch(activeNote.cdnUrl);
-    if(!r.ok) throw new Error(`Could not fetch PDF (HTTP ${r.status})`);
-    const buf=await r.arrayBuffer();
-    const bytes=new Uint8Array(buf); let bin='';
-    for(let i=0;i<bytes.length;i++) bin+=String.fromCharCode(bytes[i]);
-    const b64=btoa(bin);
-    const res=await fetch('https://api.anthropic.com/v1/messages',{
-      method:'POST', headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({
-        model:'claude-sonnet-4-20250514', max_tokens:1000,
-        messages:[{role:'user',content:[
-          {type:'document',source:{type:'base64',media_type:'application/pdf',data:b64}},
-          {type:'text',text:'Give a clear, well-structured summary of this study note. Include key topics, concepts, definitions, formulas, and revision points. Format it as a helpful review guide for a student.'}
-        ]}]
-      })
-    });
-    const data=await res.json();
-    if(data.error) throw new Error(data.error.message);
-    $('sum-txt').textContent=data.content.map(c=>c.text||'').join('\n').trim();
-    $('sum-loading').style.display='none'; $('sum-result').style.display='block';
-  } catch(e){
-    $('sum-loading').style.display='none'; $('sum-choose').style.display='block';
-    $('sum-err').style.display='block';
-    $('sum-err').innerHTML=`<div class="err-box"><svg width="14" height="14"><use href="#I-warn"/></svg>${e.message}</div>`;
-  }
-}
-function copySummary(){
-  navigator.clipboard.writeText($('sum-txt').textContent).catch(()=>{});
-  $('copy-btn').innerHTML='<svg width="13" height="13"><use href="#I-ok"/></svg>Copied!';
-  setTimeout(()=>{ $('copy-btn').innerHTML='<svg width="13" height="13"><use href="#I-copy"/></svg>Copy Summary'; },2200);
 }
 </script>
 </body>
